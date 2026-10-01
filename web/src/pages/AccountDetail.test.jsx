@@ -148,7 +148,9 @@ describe('rewrite profiles', () => {
 
     // Confirmed first: deleting a rewrite profile sends every stream it
     // rewrote back to the provider's own URL at the next refresh.
-    expect(await screen.findByText(/back to the URL the provider gave/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/back to the URL the provider gave/),
+    ).toBeInTheDocument();
     expect(m3uApi.removeProfile).not.toHaveBeenCalled();
     await user.click(screen.getByRole('button', { name: 'Delete' }));
 
