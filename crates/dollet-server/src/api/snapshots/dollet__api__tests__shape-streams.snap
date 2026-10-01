@@ -1,0 +1,25 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/channels/streams/
+---
+count: number
+page: number
+pages: number
+results[].catchup_days: number
+results[].channel_group_id: number
+results[].custom_properties: object
+results[].id: number
+results[].is_adult: bool
+results[].is_catchup: bool
+results[].is_custom: bool
+results[].is_stale: bool
+results[].last_seen: string
+results[].logo_url: null|string
+results[].m3u_account_id: number
+results[].name: string
+results[].stream_chno: null|number
+results[].stream_hash: null|string
+results[].stream_id: null|number
+results[].stream_profile_id: null|number
+results[].tvg_id: null|string
+results[].url: null|string

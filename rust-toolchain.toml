@@ -1,0 +1,12 @@
+# Pinned so the three places this builds agree: a developer's machine, the
+# `rust:1.98-trixie` stage in docker/Dockerfile, and CI.
+#
+# `cargo clippy -- -D warnings` is part of the gate, and clippy gains lints
+# with every release — so an unpinned CI runner fails on code that passed
+# locally, for a reason that has nothing to do with the change under review.
+# Raising this is a deliberate commit that fixes whatever the new lints find,
+# alongside the base image in docker/Dockerfile and `rust-version` in
+# Cargo.toml.
+[toolchain]
+channel = "1.98"
+components = ["rustfmt", "clippy"]

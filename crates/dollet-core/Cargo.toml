@@ -1,0 +1,42 @@
+[package]
+name = "dollet-core"
+description = "Domain types, database, parsers and serializers for dollet-relay"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+tokio = { workspace = true }
+sqlx = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+reqwest = { workspace = true }
+url = { workspace = true }
+quick-xml = { workspace = true }
+flate2 = { workspace = true }
+lzma-rs = { workspace = true }
+zip = { workspace = true }
+regex = { workspace = true }
+fancy-regex = { workspace = true }
+rapidfuzz = { workspace = true }
+jsonwebtoken = { workspace = true }
+pbkdf2 = { workspace = true }
+sha2 = { workspace = true }
+base64 = { workspace = true }
+rand = { workspace = true }
+subtle = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+wiremock = { workspace = true }
+insta = { workspace = true }
+pretty_assertions = { workspace = true }
+tokio = { workspace = true, features = ["test-util"] }

@@ -1,0 +1,14 @@
+6729b22b586d6d53052837256090a4909f66823adaf983fb40cc2db06a3d72f2	Alpha HD	http://provider.example/live/fixtureuser/fixturepass/1001	alpha.test	Adversarial	1	f	0	f	http://provider.example/logo/alpha.png
+a94dc6d6eb3b3cff8ba875a6fb8da38461a939eaf7e6ddd1c22ccb99ff0a7f4a	Charlie Unquoted	http://provider.example/live/fixtureuser/fixturepass/1003	charlie.test	Adversarial	3	f	0	f	
+4f49445aa1b79aee4503426b8a39d4ce7d0bc8904e5abc288ab6863ed11b455e	Delta, With Comma	http://provider.example/live/fixtureuser/fixturepass/1004	delta.test	Adversarial	4	f	0	f	
+731e74612731303c17e414b4af1066ee8d4f3f10386d310564da843568e080bf	Echo "Quoted" & Ampersand	http://provider.example/live/fixtureuser/fixturepass/1005	echo.test	Adversarial	5	f	0	f	
+8f09a68f142ef7e5ca99597f59425926991ebefe91b76d2b32de277b455c8fce	Foxtrot Number Collision	http://provider.example/live/fixtureuser/fixturepass/1006	foxtrot.test	Adversarial	1	f	0	f	
+be894b04c0d495c5f0f97549359686c7a262d7cb3fa8ff593871cf8dde54b3b9	Golf Vanishes Next Run	http://provider.example/live/fixtureuser/fixturepass/1007	golf.test	Adversarial	7	f	0	t	
+2c685cb9149fb4a5e094c1605bff85b629dcc657354cdf6264327a1e7aca3b77	Hotel URL Changes	http://provider.example/live/fixtureuser/fixturepass/1008	hotel.test	Adversarial	8	f	0	t	
+212d5b0482736297356058b724a7f98a5cf1c3ffdca70c7d8e48a634beaed1bb	Hotel URL Changes	http://provider.example/live/fixtureuser/fixturepass/1008-rotated	hotel.test	Adversarial	8	f	0	f	
+05a3a3e2de29ea673810dc7efc3a179f952338551921961b2a0de84698885748	India Renamed	http://provider.example/live/fixtureuser/fixturepass/1009	india.test	Adversarial	9	f	0	f	
+3a90fdb9c2f584c63d0e581cc595897b2c6377ce9d184fa7eae257312c072991	Juliet Catchup	http://provider.example/live/fixtureuser/fixturepass/1010	juliet.test	Adversarial	10	t	7	f	
+7b26d49ca67717e7d1ea0f24ea432452d648734ea105f42e826c143982095004	Kilo No Tvg Id	http://provider.example/live/fixtureuser/fixturepass/1011		Adversarial	11	f	0	f	
+95da7226602453f3a34fe838cef4c6c3d803a0f5b4ae976add13e04fb90a18f5	Lima Café Über	http://provider.example/live/fixtureuser/fixturepass/1012	lima.test	Second Group	12	f	0	f	
+c491e4e0f89a0484822d7514be984d0bd5104384e45b8a2b45175114edf57f21	Mike Second Group	http://provider.example/live/fixtureuser/fixturepass/1013	mike.test	Second Group	13	f	0	f	
+da25246f565eeeb2c0636e1d3482a72513f2fafa952127369ce012c142923da4	November Appears This Run	http://provider.example/live/fixtureuser/fixturepass/1014	november.test	Adversarial	14	f	0	f	

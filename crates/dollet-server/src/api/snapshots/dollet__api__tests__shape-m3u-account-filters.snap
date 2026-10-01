@@ -1,0 +1,13 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/m3u/accounts/1001/filters/
+---
+count: number
+page: number
+pages: number
+results[].exclude: bool
+results[].filter_type: string
+results[].id: number
+results[].m3u_account_id: number
+results[].order: number
+results[].regex_pattern: string

@@ -1,0 +1,5 @@
+[
+  {"category_id": "1001", "category_name": "Synth Sports", "parent_id": 0},
+  {"category_id": "1002", "category_name": "Synth News", "parent_id": 0},
+  {"category_id": "1999", "category_name": "Synth Empty Category", "parent_id": 0}
+]

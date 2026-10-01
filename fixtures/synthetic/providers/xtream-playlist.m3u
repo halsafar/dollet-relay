@@ -1,0 +1,26 @@
+#EXTM3U
+# An Xtream account's catalogue, as a file.
+#
+# This is the injection point, not a claim about what a panel serves. The
+# reconciler sees `StreamFields` whichever way a catalogue arrives, and
+# `player_api.php` is a fetch that no test can make — `allow_private` is false
+# for provider feeds and loopback is blocked regardless, so `catalogue` stops at
+# `http::get`. A file reaches the same reconciler with the same fields.
+#
+# The load-bearing attribute is `stream_id`: `StreamFields::from_entry` reads
+# it into `provider_stream_id`, and that is what `sync::hash` substitutes for
+# the URL on an Xtream account. The credentials in the URLs below are the ones
+# a provider rotates; the test rewrites them and refreshes a second time.
+
+# The seed's own Xtream stream, verbatim. A refresh has to resolve it to the row
+# that already exists rather than reporting it as new.
+#EXTINF:-1 stream_id="2002" tvg-id="synth.sports" tvg-name="Synth One Backup" group-title="Synth Sports",Synth One Backup
+https://xtream.example:8080/live/synthxc/synthxcpass/2002.ts
+
+# New to this account, in a group the account has no link to yet.
+#EXTINF:-1 stream_id="2003" tvg-id="synth.news" tvg-chno="2" group-title="Synth News",Synth XC Quoted Id
+https://xtream.example:8080/live/synthxc/synthxcpass/2003.ts
+
+# New, and with no `tvg-id` at all: the hash must not depend on one being there.
+#EXTINF:-1 stream_id="2004" group-title="Synth Sports",Synth XC Third
+https://xtream.example:8080/live/synthxc/synthxcpass/2004.ts

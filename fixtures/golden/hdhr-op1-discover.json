@@ -1,0 +1,1 @@
+{"FriendlyName": "Dollet HDHomeRun - 1", "ModelNumber": "HDTC-2US", "FirmwareName": "hdhomerun3_atsc", "FirmwareVersion": "20200101", "DeviceID": "dollet-hdhr-1", "DeviceAuth": "test_auth_token", "BaseURL": "http://ipx.test:9191/hdhr/output_profile/1", "LineupURL": "http://ipx.test:9191/hdhr/output_profile/1/lineup.json", "TunerCount": 2}

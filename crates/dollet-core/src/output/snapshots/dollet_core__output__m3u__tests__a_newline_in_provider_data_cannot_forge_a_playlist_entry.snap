@@ -1,0 +1,7 @@
+---
+source: crates/dollet-core/src/output/m3u.rs
+expression: rendered
+---
+#EXTM3U x-tvg-url="http://ipx.test/output/epg" url-tvg="http://ipx.test/output/epg"
+#EXTINF:-1 tvg-id="a b" tvg-name="Real #EXTINF:-1,Injected http://evil.example/x.ts" tvg-logo="http://ipx.test/api/channels/logos/1/cache/" tvg-chno="1" group-title="News Group",Real #EXTINF:-1,Injected http://evil.example/x.ts
+http://p.example/a.ts http://evil.example/y.ts

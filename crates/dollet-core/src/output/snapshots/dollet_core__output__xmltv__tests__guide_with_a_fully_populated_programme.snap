@@ -1,0 +1,69 @@
+---
+source: crates/dollet-core/src/output/xmltv.rs
+expression: "render(|w|\n{ w.write_programme(&Programme::from_program(\"101\", &programme)).unwrap(); })"
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<tv generator-info-name="dollet-relay" generator-info-url="https://github.com/halsafar/dollet-relay">
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="101">
+    <title>Everything</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <category>News</category>
+    <category>Live &amp; Local</category>
+    <keyword>breaking</keyword>
+    <episode-num system="onscreen">S02E06</episode-num>
+    <episode-num system="dd_progid">EP01.0002</episode-num>
+    <episode-num system="thetvdb.com">series/12</episode-num>
+    <episode-num system="imdb.com">tt0000001</episode-num>
+    <episode-num system="xmltv_ns">1.5.</episode-num>
+    <language>English</language>
+    <orig-language>French</orig-language>
+    <length units="minutes">30</length>
+    <video>
+      <present>yes</present>
+      <colour>yes</colour>
+      <aspect>16:9</aspect>
+      <quality>HDTV</quality>
+    </video>
+    <audio>
+      <present>yes</present>
+      <stereo>stereo</stereo>
+    </audio>
+    <subtitles type="teletext">
+      <language>English</language>
+    </subtitles>
+    <subtitles type="onscreen">
+    </subtitles>
+    <subtitles>
+      <language>Welsh</language>
+    </subtitles>
+    <rating system="VCHIP">
+      <value>TV-14</value>
+    </rating>
+    <star-rating system="tv.com">
+      <value>4/5</value>
+    </star-rating>
+    <star-rating>
+      <value>8/10</value>
+    </star-rating>
+    <review type="text" source="x" reviewer="Rita">Good.</review>
+    <review type="text">Bare.</review>
+    <image type="poster" size="2" orient="P" system="tmdb">http://i/1.jpg</image>
+    <image>http://i/2.jpg</image>
+    <credits>
+      <director>Dee</director>
+      <writer>Wanda</writer>
+      <writer>Walt</writer>
+      <actor role="Lead" guest="yes">Ann</actor>
+      <actor>Bob</actor>
+    </credits>
+    <date>20240101</date>
+    <country>US</country>
+    <icon src="http://i/poster.jpg" />
+    <previously-shown start="20240101000000" channel="b.us" />
+    <premiere>Series premiere</premiere>
+    <last-chance />
+    <new />
+    <live />
+  </programme>
+</tv>

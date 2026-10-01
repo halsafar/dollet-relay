@@ -1,0 +1,15 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/core/settings/proxy_settings/
+---
+id: number
+key: string
+name: string
+value.buffering_speed: number
+value.buffering_timeout: number
+value.channel_client_wait_period: number
+value.channel_init_grace_period: number
+value.channel_shutdown_delay: number
+value.new_client_behind_seconds: number
+value.ring_max_bytes: number
+value.ring_seconds: number

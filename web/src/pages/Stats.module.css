@@ -1,0 +1,214 @@
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  border: 1px solid var(--mantine-color-dark-6);
+  border-radius: 7px;
+  background: var(--mantine-color-dark-8);
+  padding: 12px 14px;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.channelName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mantine-color-gray-1);
+}
+
+.output {
+  font-size: 11px;
+  color: var(--mantine-color-dark-2);
+}
+
+/* The upstream currently being read. Long, credential-bearing, and the thing
+   an operator most wants to see when a channel misbehaves. */
+.url {
+  font-family: var(--mantine-font-family-monospace);
+  font-size: 11px;
+  color: var(--mantine-color-dark-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.badge {
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: var(--mantine-color-dark-6);
+  color: var(--mantine-color-gray-3);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 8px 0;
+  border-top: 1px solid var(--mantine-color-dark-7);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.metricLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mantine-color-dark-3);
+}
+
+.metricValue {
+  font-size: 13px;
+  color: var(--mantine-color-gray-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.clients {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.clients th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--mantine-color-dark-2);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 8px 4px 0;
+  border-bottom: 1px solid var(--mantine-color-dark-6);
+}
+
+.clients td {
+  padding: 5px 8px 5px 0;
+  border-bottom: 1px solid var(--mantine-color-dark-7);
+  color: var(--mantine-color-gray-3);
+  white-space: nowrap;
+}
+
+.userAgent {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--mantine-color-dark-2);
+  font-size: 11px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 48px 12px;
+  text-align: center;
+}
+
+.events {
+  margin-top: 16px;
+  border: 1px solid var(--mantine-color-dark-6);
+  border-radius: 7px;
+  background: var(--mantine-color-dark-8);
+}
+
+.eventsHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--mantine-color-dark-6);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mantine-color-gray-2);
+}
+
+.eventRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 5px 12px;
+  border-bottom: 1px solid var(--mantine-color-dark-7);
+  font-size: 12px;
+}
+
+.eventTime {
+  color: var(--mantine-color-dark-3);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  flex: none;
+}
+
+.eventType {
+  color: var(--mantine-color-accent-4);
+  font-family: var(--mantine-font-family-monospace);
+  font-size: 11px;
+  flex: none;
+}
+
+.eventDetail {
+  color: var(--mantine-color-dark-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* What is on the channel, as distinct from what the engine is doing with it. */
+.nowPlaying {
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border: 1px solid var(--mantine-color-dark-6);
+  border-radius: 5px;
+  background: var(--mantine-color-dark-7);
+}
+
+.nowTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mantine-color-gray-2);
+}
+
+.nowSubtitle {
+  font-size: 11.5px;
+  color: var(--mantine-color-dark-1);
+  margin-top: 1px;
+}
+
+.nowTimes {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3px;
+  font-size: 10.5px;
+  color: var(--mantine-color-dark-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.nowDescription {
+  margin-top: 5px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--mantine-color-dark-1);
+}

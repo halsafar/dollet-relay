@@ -1,0 +1,6 @@
+0	name	^Foxtrot	include	an include placed before a broad exclude, so first-match-wins decides
+1	name	^Fox	exclude	dead for Foxtrot, live for Foxglove
+2	name	^Kilo	exclude	a plain exclude
+3	name	(?<=Mike )Second	exclude	lookbehind: rejected by Rust's regex crate, which is why we use fancy_regex
+4	name	(m)\1	exclude	a backreference, same reason
+5	name	(\w+) $1	exclude	a JS-style backreference in a search pattern

@@ -1,0 +1,27 @@
+---
+source: crates/dollet-core/src/output/hdhr.rs
+expression: "lineup(\"http://ipx.test\", &sample(), None)"
+---
+[
+  {
+    "GuideNumber": "101",
+    "GuideName": "Channel A",
+    "URL": "http://ipx.test/proxy/ts/stream/00000000-0000-0000-0000-000000000001",
+    "Guide_ID": "101",
+    "Station": "101"
+  },
+  {
+    "GuideNumber": "102.5",
+    "GuideName": "Channel B",
+    "URL": "http://ipx.test/proxy/ts/stream/00000000-0000-0000-0000-000000000002",
+    "Guide_ID": "102.5",
+    "Station": "102.5"
+  },
+  {
+    "GuideNumber": "4",
+    "GuideName": "Tom & Jerry",
+    "URL": "http://ipx.test/proxy/ts/stream/00000000-0000-0000-0000-000000000004",
+    "Guide_ID": "4",
+    "Station": "4"
+  }
+]

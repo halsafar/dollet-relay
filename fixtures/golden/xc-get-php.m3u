@@ -1,0 +1,33 @@
+#EXTM3U x-tvg-url="http://ipx.test:9191/xmltv.php?username=fixtureadmin&password=fixturepass" url-tvg="http://ipx.test:9191/xmltv.php?username=fixtureadmin&password=fixturepass"
+#EXTINF:-1 tvg-id="1" tvg-name="CA FLEIMIR1 (FHD) (D)" tvg-logo="http://ipx.test:9191/api/channels/logos/20/cache/" tvg-chno="1" group-title="Shoark Blask",CA FLEIMIR1 (FHD) (D)
+http://ipx.test:9191/live/fixtureadmin/fixturepass/171
+#EXTINF:-1 tvg-id="2" tvg-name="FRUST  SKRAERD" tvg-logo="http://ipx.test:9191/api/channels/logos/1/cache/" tvg-chno="2" group-title="US Blask",FRUST  SKRAERD
+http://ipx.test:9191/live/fixtureadmin/fixturepass/173
+#EXTINF:-1 tvg-id="3" tvg-name="US: PHROUR Gliars" tvg-logo="http://ipx.test:9191/api/channels/logos/2/cache/" tvg-chno="3" group-title="US Blask",US: PHROUR Gliars
+http://ipx.test:9191/live/fixtureadmin/fixturepass/174
+#EXTINF:-1 tvg-id="10" tvg-name="US: GLOUX2" tvg-logo="http://ipx.test:9191/api/channels/logos/4/cache/" tvg-chno="10" group-title="US Blask",US: GLOUX2
+http://ipx.test:9191/live/fixtureadmin/fixturepass/181
+#EXTINF:-1 tvg-id="19" tvg-name="FLEIS PPV Criamir" tvg-logo="http://ipx.test:9191/api/channels/logos/181/cache/" tvg-chno="19" group-title="PPV Skriask Brux",FLEIS PPV Criamir
+http://ipx.test:9191/live/fixtureadmin/fixturepass/190
+#EXTINF:-1 tvg-id="20" tvg-name="FLEIS PPV Trust Chus" tvg-logo="http://ipx.test:9191/api/channels/logos/181/cache/" tvg-chno="20" group-title="PPV Skriask Brux",FLEIS PPV Trust Chus
+http://ipx.test:9191/live/fixtureadmin/fixturepass/191
+#EXTINF:-1 tvg-id="21" tvg-name="FLEIS PPV Clent Criamir" tvg-logo="http://ipx.test:9191/api/channels/logos/14/cache/" tvg-chno="21" group-title="PPV Skriask Brux",FLEIS PPV Clent Criamir
+http://ipx.test:9191/live/fixtureadmin/fixturepass/192
+#EXTINF:-1 tvg-id="22" tvg-name="FRUIVO Phrouns VRON Throns @ Plavo 12 2:00 CLOAX :FLEIMIR+  46" tvg-logo="" tvg-chno="22" group-title="FLEIMIR Gliars",FRUIVO Phrouns VRON Throns @ Plavo 12 2:00 CLOAX :FLEIMIR+  46
+http://ipx.test:9191/live/fixtureadmin/fixturepass/193
+#EXTINF:-1 tvg-id="42" tvg-name="CA FLEIMIR5 (FHD) (D)" tvg-logo="http://ipx.test:9191/api/channels/logos/16/cache/" tvg-chno="42" group-title="Shoark Blask",CA FLEIMIR5 (FHD) (D)
+http://ipx.test:9191/live/fixtureadmin/fixturepass/213
+#EXTINF:-1 tvg-id="43" tvg-name="CA FLEIMIR4 (FHD) (D)" tvg-logo="http://ipx.test:9191/api/channels/logos/17/cache/" tvg-chno="43" group-title="Shoark Blask",CA FLEIMIR4 (FHD) (D)
+http://ipx.test:9191/live/fixtureadmin/fixturepass/214
+#EXTINF:-1 tvg-id="48" tvg-name=":FLEIMIR+  134" tvg-logo="http://ipx.test:9191/api/channels/logos/75/cache/" tvg-chno="48" group-title="FLEIMIR Gliars",:FLEIMIR+  134
+http://ipx.test:9191/live/fixtureadmin/fixturepass/219
+#EXTINF:-1 tvg-id="49" tvg-name="2026 CRAST Crors Zraemir Shoark snavo Grurn and Zril A @ Plavo 12 2:30 CLOAX :FLEIMIR+  47" tvg-logo="" tvg-chno="49" group-title="FLEIMIR Gliars",2026 CRAST Crors Zraemir Shoark snavo Grurn and Zril A @ Plavo 12 2:30 CLOAX :FLEIMIR+  47
+http://ipx.test:9191/live/fixtureadmin/fixturepass/220
+#EXTINF:-1 tvg-id="900" tvg-name="Test, &quot;Quoted&quot; & <Tagged>" tvg-logo="" tvg-chno="900" tvc-guide-stationid="99999" group-title="US Blask",Test, "Quoted" & <Tagged>
+http://ipx.test:9191/live/fixtureadmin/fixturepass/900
+#EXTINF:-1 tvg-id="901.5" tvg-name="Fractional Number" tvg-logo="" tvg-chno="901.5" group-title="US Blask",Fractional Number
+http://ipx.test:9191/live/fixtureadmin/fixturepass/901
+#EXTINF:-1 tvg-id="904" tvg-name="Первый канал" tvg-logo="" tvg-chno="904" group-title="Default",Первый канал
+http://ipx.test:9191/live/fixtureadmin/fixturepass/904
+#EXTINF:-1 tvg-id="902" tvg-name="No Number" tvg-logo="" tvg-chno="" group-title="US Blask",No Number
+http://ipx.test:9191/live/fixtureadmin/fixturepass/902

@@ -1,0 +1,12 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/epg/epgdata/
+---
+count: number
+page: number
+pages: number
+results[].epg_source_id: number
+results[].icon_url: null|string
+results[].id: number
+results[].name: string
+results[].tvg_id: string

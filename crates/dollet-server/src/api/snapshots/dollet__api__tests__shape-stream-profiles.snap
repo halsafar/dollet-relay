@@ -1,0 +1,14 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/core/streamprofiles/
+---
+count: number
+page: number
+pages: number
+results[].command: string
+results[].id: number
+results[].is_active: bool
+results[].locked: bool
+results[].name: string
+results[].parameters: string
+results[].user_agent_id: null|number

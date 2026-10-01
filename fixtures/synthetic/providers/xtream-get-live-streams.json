@@ -1,0 +1,16 @@
+[
+  {"num": 1, "name": "Synth XC Numeric", "stream_type": "live", "stream_id": 2002,
+   "stream_icon": "https://logos.example/synth-sports.png", "epg_channel_id": "synth.sports",
+   "added": "1756684800", "is_adult": 0, "category_id": "1001", "tv_archive": 0},
+  {"num": "2", "name": "Synth XC Quoted Id", "stream_type": "live", "stream_id": "2003",
+   "stream_icon": "", "epg_channel_id": "synth.news",
+   "added": "1756684800", "is_adult": "1", "category_id": "1002", "tv_archive": 0},
+  {"num": "3.5", "stream_type": "live", "stream_id": 2004,
+   "epg_channel_id": null, "added": "1756684800", "category_id": "1001"},
+  {"num": 4, "name": "   ", "stream_type": "live", "stream_id": "2005",
+   "category_id": "1001"},
+  {"num": 5, "name": "Synth XC Unknown Category", "stream_type": "live", "stream_id": 2006,
+   "category_id": "4242"},
+  {"num": 6, "name": "Synth XC No Id", "stream_type": "live",
+   "category_id": "1001"}
+]

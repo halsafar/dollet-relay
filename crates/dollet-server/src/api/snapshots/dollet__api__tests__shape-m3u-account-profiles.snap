@@ -1,0 +1,15 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/m3u/accounts/1001/profiles/
+---
+count: number
+page: number
+pages: number
+results[].id: number
+results[].is_active: bool
+results[].is_default: bool
+results[].m3u_account_id: number
+results[].max_streams: number
+results[].name: string
+results[].replace_pattern: string
+results[].search_pattern: string

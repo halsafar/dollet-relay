@@ -1,0 +1,25 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/notifications/
+---
+count: number
+page: number
+pages: number
+results[].acknowledged_at: null|string
+results[].created_at: string
+results[].detail.channel_group_id: number
+results[].detail.m3u_account_id: number
+results[].detail.patterns[].message: string
+results[].detail.patterns[].pattern: string
+results[].detail.range_end: number
+results[].detail.range_start: number
+results[].detail.stream_ids[]: number
+results[].detail.streams_without_a_channel: number
+results[].id: number
+results[].kind: string
+results[].message: string
+results[].occurrences: number
+results[].severity: string
+results[].subject: string
+results[].title: string
+results[].updated_at: string

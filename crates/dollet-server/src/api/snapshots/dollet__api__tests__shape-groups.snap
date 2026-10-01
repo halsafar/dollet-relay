@@ -1,0 +1,17 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/channels/groups/
+---
+count: number
+page: number
+pages: number
+results[].channel_count: number
+results[].id: number
+results[].links[].auto_channel_sync: bool
+results[].links[].enabled: bool
+results[].links[].m3u_account_id: number
+results[].links[].numbering_mode: string
+results[].name: string
+results[].number_end: null|number
+results[].number_start: null|number
+results[].stream_count: number

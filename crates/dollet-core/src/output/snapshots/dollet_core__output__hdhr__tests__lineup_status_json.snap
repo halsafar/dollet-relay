@@ -1,0 +1,12 @@
+---
+source: crates/dollet-core/src/output/hdhr.rs
+expression: lineup_status()
+---
+{
+  "ScanInProgress": 0,
+  "ScanPossible": 0,
+  "Source": "Cable",
+  "SourceList": [
+    "Cable"
+  ]
+}

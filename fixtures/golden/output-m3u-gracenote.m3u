@@ -1,0 +1,33 @@
+#EXTM3U x-tvg-url="http://ipx.test:9191/output/epg?tvg_id_source=gracenote" url-tvg="http://ipx.test:9191/output/epg?tvg_id_source=gracenote"
+#EXTINF:-1 tvg-id="1" tvg-name="CA FLEIMIR1 (FHD) (D)" tvg-logo="http://ipx.test:9191/api/channels/logos/20/cache/" tvg-chno="1" group-title="Shoark Blask",CA FLEIMIR1 (FHD) (D)
+http://ipx.test:9191/proxy/ts/stream/91af9876-76cc-4bd1-bb7e-0d16a5af10a1
+#EXTINF:-1 tvg-id="2" tvg-name="FRUST  SKRAERD" tvg-logo="http://ipx.test:9191/api/channels/logos/1/cache/" tvg-chno="2" group-title="US Blask",FRUST  SKRAERD
+http://ipx.test:9191/proxy/ts/stream/437f0f70-4b16-4467-bb93-7ec635331f37
+#EXTINF:-1 tvg-id="3" tvg-name="US: PHROUR Gliars" tvg-logo="http://ipx.test:9191/api/channels/logos/2/cache/" tvg-chno="3" group-title="US Blask",US: PHROUR Gliars
+http://ipx.test:9191/proxy/ts/stream/1e085859-fd56-423a-9894-64d6edb28889
+#EXTINF:-1 tvg-id="10" tvg-name="US: GLOUX2" tvg-logo="http://ipx.test:9191/api/channels/logos/4/cache/" tvg-chno="10" group-title="US Blask",US: GLOUX2
+http://ipx.test:9191/proxy/ts/stream/a6efc6ad-b968-496e-906b-de9614f010e0
+#EXTINF:-1 tvg-id="19" tvg-name="FLEIS PPV Criamir" tvg-logo="http://ipx.test:9191/api/channels/logos/181/cache/" tvg-chno="19" group-title="PPV Skriask Brux",FLEIS PPV Criamir
+http://ipx.test:9191/proxy/ts/stream/12b4f4c6-211f-4331-88a9-e0c5ce808851
+#EXTINF:-1 tvg-id="20" tvg-name="FLEIS PPV Trust Chus" tvg-logo="http://ipx.test:9191/api/channels/logos/181/cache/" tvg-chno="20" group-title="PPV Skriask Brux",FLEIS PPV Trust Chus
+http://ipx.test:9191/proxy/ts/stream/d361f5fb-47be-453d-ad62-c568a1c968dd
+#EXTINF:-1 tvg-id="21" tvg-name="FLEIS PPV Clent Criamir" tvg-logo="http://ipx.test:9191/api/channels/logos/14/cache/" tvg-chno="21" group-title="PPV Skriask Brux",FLEIS PPV Clent Criamir
+http://ipx.test:9191/proxy/ts/stream/6e53fa0c-22ad-492c-a152-3c96632f80a8
+#EXTINF:-1 tvg-id="22" tvg-name="FRUIVO Phrouns VRON Throns @ Plavo 12 2:00 CLOAX :FLEIMIR+  46" tvg-logo="" tvg-chno="22" group-title="FLEIMIR Gliars",FRUIVO Phrouns VRON Throns @ Plavo 12 2:00 CLOAX :FLEIMIR+  46
+http://ipx.test:9191/proxy/ts/stream/cc0f27df-c87a-457e-bf1c-da96bda87e31
+#EXTINF:-1 tvg-id="42" tvg-name="CA FLEIMIR5 (FHD) (D)" tvg-logo="http://ipx.test:9191/api/channels/logos/16/cache/" tvg-chno="42" group-title="Shoark Blask",CA FLEIMIR5 (FHD) (D)
+http://ipx.test:9191/proxy/ts/stream/ff66a727-18ba-470e-bf98-be48f6c9ac7e
+#EXTINF:-1 tvg-id="43" tvg-name="CA FLEIMIR4 (FHD) (D)" tvg-logo="http://ipx.test:9191/api/channels/logos/17/cache/" tvg-chno="43" group-title="Shoark Blask",CA FLEIMIR4 (FHD) (D)
+http://ipx.test:9191/proxy/ts/stream/5798602f-d27a-4fbf-88e5-aa198d8f72c3
+#EXTINF:-1 tvg-id="48" tvg-name=":FLEIMIR+  134" tvg-logo="http://ipx.test:9191/api/channels/logos/75/cache/" tvg-chno="48" group-title="FLEIMIR Gliars",:FLEIMIR+  134
+http://ipx.test:9191/proxy/ts/stream/5fb56b8d-c03b-40a2-a1e3-69d6aed040a3
+#EXTINF:-1 tvg-id="49" tvg-name="2026 CRAST Crors Zraemir Shoark snavo Grurn and Zril A @ Plavo 12 2:30 CLOAX :FLEIMIR+  47" tvg-logo="" tvg-chno="49" group-title="FLEIMIR Gliars",2026 CRAST Crors Zraemir Shoark snavo Grurn and Zril A @ Plavo 12 2:30 CLOAX :FLEIMIR+  47
+http://ipx.test:9191/proxy/ts/stream/db9c3df8-f953-441d-bcc4-6ec8d6ae6ccd
+#EXTINF:-1 tvg-id="99999" tvg-name="Test, &quot;Quoted&quot; & <Tagged>" tvg-logo="" tvg-chno="900" tvc-guide-stationid="99999" group-title="US Blask",Test, "Quoted" & <Tagged>
+http://ipx.test:9191/proxy/ts/stream/aaaaaaaa-0000-4000-8000-000000000900
+#EXTINF:-1 tvg-id="901.5" tvg-name="Fractional Number" tvg-logo="" tvg-chno="901.5" group-title="US Blask",Fractional Number
+http://ipx.test:9191/proxy/ts/stream/aaaaaaaa-0000-4000-8000-000000000901
+#EXTINF:-1 tvg-id="904" tvg-name="Первый канал" tvg-logo="" tvg-chno="904" group-title="Default",Первый канал
+http://ipx.test:9191/proxy/ts/stream/aaaaaaaa-0000-4000-8000-000000000904
+#EXTINF:-1 tvg-id="902" tvg-name="No Number" tvg-logo="" tvg-chno="" group-title="US Blask",No Number
+http://ipx.test:9191/proxy/ts/stream/aaaaaaaa-0000-4000-8000-000000000902

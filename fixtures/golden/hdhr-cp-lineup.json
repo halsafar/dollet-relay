@@ -1,0 +1,23 @@
+[
+  {
+    "GuideName": "CA FLEIMIR1 (FHD) (D)",
+    "GuideNumber": "1",
+    "Guide_ID": "1",
+    "Station": "1",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/91af9876-76cc-4bd1-bb7e-0d16a5af10a1"
+  },
+  {
+    "GuideName": "Test, \"Quoted\" & <Tagged>",
+    "GuideNumber": "900",
+    "Guide_ID": "900",
+    "Station": "900",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/aaaaaaaa-0000-4000-8000-000000000900"
+  },
+  {
+    "GuideName": "Fractional Number",
+    "GuideNumber": "901.5",
+    "Guide_ID": "901.5",
+    "Station": "901.5",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/aaaaaaaa-0000-4000-8000-000000000901"
+  }
+]

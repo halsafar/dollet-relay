@@ -1,0 +1,21 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/core/jobs/
+---
+count: number
+page: number
+pages: number
+results[].id: number
+results[].interval_seconds: null|number
+results[].key: string
+results[].kind: string
+results[].last_error: null|string
+results[].last_success_at: null|string
+results[].message: null|string
+results[].next_run_at: null|string
+results[].payload.epg_source_id: number
+results[].payload.m3u_account_id: number
+results[].progress: number
+results[].running: bool
+results[].started_at: null|string
+results[].state: string

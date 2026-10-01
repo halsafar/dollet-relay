@@ -1,0 +1,20 @@
+---
+source: crates/dollet-core/src/output/xmltv.rs
+expression: "render(|w|\n{\n    for ch in &channels\n    { w.write_effective_channel(ch, TvgIdSource::ChannelNumber).unwrap(); }\n    w.write_programme(&Programme::from_program(\"101\", &programme)).unwrap();\n})"
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<tv generator-info-name="dollet-relay" generator-info-url="https://github.com/halsafar/dollet-relay">
+  <channel id="101">
+    <display-name>Channel A</display-name>
+    <icon src="http://ipx.test/logo/1.png" />
+  </channel>
+  <channel id="2">
+    <display-name>Channel &amp; B</display-name>
+    <icon src="http://ipx.test/logo/2.png" />
+  </channel>
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="101">
+    <title>Show</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+  </programme>
+</tv>

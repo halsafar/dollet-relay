@@ -1,0 +1,29 @@
+---
+source: crates/dollet-core/src/output/xc.rs
+expression: "account_info(&AccountOptions\n{\n    username: \"bob\", password: \"s3cret\", message: \"dollet-relay XC API\", host:\n    \"ipx.test\", port: \"9191\", scheme: \"http\", active_connections: 1,\n    max_connections: 4, now: utc(\"2026-09-11T15:45:00Z\"),\n})"
+---
+{
+  "user_info": {
+    "username": "bob",
+    "password": "s3cret",
+    "message": "dollet-relay XC API",
+    "auth": 1,
+    "status": "Active",
+    "exp_date": "1796917500",
+    "active_cons": "1",
+    "max_connections": "4",
+    "allowed_output_formats": [
+      "ts",
+      "mp4"
+    ]
+  },
+  "server_info": {
+    "url": "ipx.test",
+    "server_protocol": "http",
+    "port": "9191",
+    "timezone": "UTC",
+    "timestamp_now": 1789141500,
+    "time_now": "2026-09-11 15:45:00",
+    "process": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "checkJs": true,
+    "strict": false,
+    "noEmit": true,
+    "allowJs": true,
+    "baseUrl": "."
+  },
+  "include": ["src", "vite.config.js"],
+  "exclude": ["node_modules", "dist", "coverage"]
+}

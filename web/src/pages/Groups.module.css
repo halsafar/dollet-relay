@@ -1,0 +1,56 @@
+.name {
+  font-weight: 500;
+  color: var(--mantine-color-gray-2);
+}
+
+.count {
+  font-variant-numeric: tabular-nums;
+  color: var(--mantine-color-gray-4);
+}
+
+.range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rangeDash {
+  color: var(--mantine-color-gray-6);
+}
+
+.provider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.switchLabel {
+  padding-inline-end: 0;
+  font-size: 11.5px;
+  color: var(--mantine-color-gray-5);
+}
+
+/* The streams an auto-sync switch-on would turn into channels, one per line
+   with the number each would take. */
+.costList {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12.5px;
+}
+
+.costNumber {
+  margin-left: 4px;
+  color: var(--mantine-color-gray-5);
+}
+
+/* The policy row sits between the heading and the table, aligned to the
+   inputs' baselines rather than their labels. */
+.policy {
+  align-items: flex-end;
+  margin-bottom: 10px;
+}
+
+.policyAction {
+  margin-bottom: 1px;
+}

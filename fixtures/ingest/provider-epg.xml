@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tv generator-info-name="ingest-fixture">
+  <channel id="alpha.test">
+    <display-name>Alpha</display-name>
+    <icon src="http://provider.example/logo/alpha.png" />
+  </channel>
+  <channel id="lima.test">
+    <display-name>Lima Caf&eacute; Über</display-name>
+    <icon src="http://provider.example/logo/lima.png" />
+  </channel>
+  <channel id="echo.test">
+    <display-name>Echo "Quoted" &amp; Ampersand</display-name>
+  </channel>
+  <channel id="orphan.test">
+    <display-name>Orphan With No Stream</display-name>
+  </channel>
+  <programme start="@T0@ +0000" stop="@T1@ +0000" channel="alpha.test">
+    <title lang="fr">Alpha Matin</title>
+    <title lang="en">Alpha Morning</title>
+    <sub-title>Episode One</sub-title>
+    <desc>A plain description.</desc>
+    <category>News</category>
+    <episode-num system="xmltv_ns">1.4.</episode-num>
+    <rating system="MPAA"><value>PG</value></rating>
+    <credits><actor role="Host">Ann</actor><director>Dee</director></credits>
+  </programme>
+  <programme start="@T1@ +0000" stop="@T2@ +0000" channel="alpha.test">
+    <title>Alpha Caf&eacute; Hour</title>
+    <desc>Entity: &eacute;&nbsp;&mdash; and a raw ampersand: Acme &amp; Co.</desc>
+    <category>M&uacute;sica</category>
+  </programme>
+  <programme start="@T0@ +0000" stop="@T2@ +0000" channel="lima.test">
+    <title>Lima Überraschung</title>
+    <desc>Non-ASCII throughout: éöå中文.</desc>
+  </programme>
+  <programme start="@T2@" stop="@T3@" channel="alpha.test">
+    <title>Alpha No Timezone</title>
+    <desc>Neither timestamp states an offset.</desc>
+  </programme>
+  <programme start="@T3@ +0000" channel="alpha.test">
+    <title>Alpha No Stop Time</title>
+    <desc>The stop attribute is absent entirely.</desc>
+  </programme>
+  <programme start="@T0@ +0000" stop="@T1@ +0000" channel="echo.test">
+    <title>Echo &lt;Tagged&gt; &amp; Quoted</title>
+    <desc>Markup characters in a title.</desc>
+  </programme>
+  <programme start="@T0@ +0000" stop="@T1@ +0000" channel="nosuchchannel.test">
+    <title>Programme For A Channel Not Declared</title>
+  </programme>
+</tv>

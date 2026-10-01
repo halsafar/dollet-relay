@@ -1,0 +1,5 @@
+alpha.test	20260913120000	20260913130000	Alpha Matin	Episode One	A plain description.	{"rating": "PG", "season": 2, "credits": {"actor": [{"name": "Ann", "role": "Host"}], "director": ["Dee"]}, "episode": 5, "categories": ["News"], "rating_system": "MPAA"}
+alpha.test	20260913130000	20260913140000	Alpha Café Hour		Entity: é — and a raw ampersand: Acme & Co.	{"categories": ["Música"]}
+alpha.test	20260913140000	20260913150000	Alpha No Timezone		Neither timestamp states an offset.	
+echo.test	20260913120000	20260913130000	Echo <Tagged> & Quoted		Markup characters in a title.	
+lima.test	20260913120000	20260913140000	Lima Überraschung		Non-ASCII throughout: éöå中文.	

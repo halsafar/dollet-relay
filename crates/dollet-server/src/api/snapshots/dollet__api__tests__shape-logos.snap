@@ -1,0 +1,12 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/channels/logos/
+---
+count: number
+page: number
+pages: number
+results[].channel_count: number
+results[].id: number
+results[].is_used: bool
+results[].name: string
+results[].url: string

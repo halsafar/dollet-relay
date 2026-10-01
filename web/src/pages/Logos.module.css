@@ -1,0 +1,14 @@
+/* URLs are long and provider-generated; let the cell truncate rather than
+   forcing a horizontal scrollbar across the whole table. */
+.url {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--mantine-color-dark-1);
+}
+
+.url:hover {
+  color: var(--mantine-color-accent-4);
+}

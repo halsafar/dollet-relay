@@ -1,0 +1,70 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin-bottom: 18px;
+}
+
+.section:last-of-type {
+  margin-bottom: 0;
+}
+
+/* The heading and its buttons share a row, but the buttons are not *in* the
+   heading: nesting them there put their labels into its accessible name, so a
+   screen reader announced the section as "M3U accounts Refresh all Add M3U". */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mantine-color-gray-2);
+}
+
+/* The buttons sit at the right-hand end of the row. */
+.sectionHeader > button:first-of-type {
+  margin-left: auto;
+}
+
+
+
+.ruleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--mantine-color-dark-6);
+  border-radius: 5px;
+  background: var(--mantine-color-dark-7);
+}
+
+.pattern {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Deliberately loud: this setting decides whether a provider outage costs the
+   user their lineup. */
+.staleNote {
+  line-height: 1.45;
+}
+
+/* Names come from the provider and the guide, so they are clamped to one line
+   each rather than trusted to be short. */
+.decisions {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+
+.decisions li {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,0 +1,27 @@
+#EXTM3U x-tvg-url="http://provider.example/epg.xml"
+#EXTINF:-1 tvg-id="alpha.test" tvg-name="Alpha" tvg-logo="http://provider.example/logo/alpha.png" tvg-chno="1" group-title="Adversarial",Alpha HD
+http://provider.example/live/fixtureuser/fixturepass/1001
+#EXTINF:-1 tvg-id="alpha.test" tvg-name="Alpha Again" tvg-logo="http://provider.example/logo/alpha.png" tvg-chno="1" group-title="Adversarial",Alpha Duplicate
+http://provider.example/live/fixtureuser/fixturepass/1001
+#EXTINF:-1 tvg-id=charlie.test tvg-chno=3 group-title=Adversarial,Charlie Unquoted
+http://provider.example/live/fixtureuser/fixturepass/1003
+#EXTINF:-1 group-title=Adversarial tvg-id="delta.test" tvg-chno="4",Delta, With Comma
+http://provider.example/live/fixtureuser/fixturepass/1004
+#EXTINF:-1 tvg-id="echo.test" tvg-name="Echo" tvg-chno="5" group-title="Adversarial",Echo "Quoted" & Ampersand
+http://provider.example/live/fixtureuser/fixturepass/1005
+#EXTINF:-1 tvg-id="foxtrot.test" tvg-name="Foxtrot" tvg-chno="1" group-title="Adversarial",Foxtrot Number Collision
+http://provider.example/live/fixtureuser/fixturepass/1006
+#EXTINF:-1 tvg-id="golf.test" tvg-name="Golf" tvg-chno="7" group-title="Adversarial",Golf Vanishes Next Run
+http://provider.example/live/fixtureuser/fixturepass/1007
+#EXTINF:-1 tvg-id="hotel.test" tvg-name="Hotel" tvg-chno="8" group-title="Adversarial",Hotel URL Changes
+http://provider.example/live/fixtureuser/fixturepass/1008
+#EXTINF:-1 tvg-id="india.test" tvg-name="India" tvg-chno="9" group-title="Adversarial",India Name Changes
+http://provider.example/live/fixtureuser/fixturepass/1009
+#EXTINF:-1 tvg-id="juliet.test" tvg-name="Juliet" tvg-chno="10" group-title="Adversarial" catchup="default" catchup-days="7" catchup-source="http://provider.example/timeshift/{utc}",Juliet Catchup
+http://provider.example/live/fixtureuser/fixturepass/1010
+#EXTINF:-1 tvg-chno="11" group-title="Adversarial",Kilo No Tvg Id
+http://provider.example/live/fixtureuser/fixturepass/1011
+#EXTINF:-1 tvg-id="lima.test" tvg-name="Lima" tvg-chno="12" group-title="Second Group",Lima Café Über
+http://provider.example/live/fixtureuser/fixturepass/1012
+#EXTINF:-1 tvg-id="mike.test" tvg-name="Mike" tvg-chno="13" group-title="Second Group",Mike Second Group
+http://provider.example/live/fixtureuser/fixturepass/1013

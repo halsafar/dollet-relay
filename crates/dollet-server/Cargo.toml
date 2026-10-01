@@ -1,0 +1,46 @@
+[package]
+name = "dollet-server"
+description = "dollet-relay: a live TV relay serving HDHomeRun, M3U, XMLTV and Xtream Codes"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[[bin]]
+name = "dollet"
+path = "src/main.rs"
+
+[dependencies]
+dollet-core = { workspace = true }
+dollet-stream = { workspace = true }
+
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+futures-util = { workspace = true }
+axum = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+sqlx = { workspace = true }
+dashmap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+anyhow = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+reqwest = { workspace = true }
+url = { workspace = true }
+rust-embed = { workspace = true }
+mime_guess = { workspace = true }
+clap = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+wiremock = { workspace = true }
+insta = { workspace = true }
+pretty_assertions = { workspace = true }
+tokio = { workspace = true, features = ["test-util"] }
+zip = { workspace = true }

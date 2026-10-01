@@ -1,0 +1,4 @@
+alpha.test	Alpha	http://provider.example/logo/alpha.png
+echo.test	Echo "Quoted" & Ampersand	
+lima.test	Lima Café Über	http://provider.example/logo/lima.png
+orphan.test	Orphan With No Stream	

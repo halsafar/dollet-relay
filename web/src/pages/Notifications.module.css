@@ -1,0 +1,6 @@
+/* The producer writes a sentence, not a label, so it wraps rather than being
+   truncated to something that reads as a different message. */
+.message {
+  white-space: normal;
+  line-height: 1.35;
+}

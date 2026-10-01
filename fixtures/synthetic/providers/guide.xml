@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Hand-written XMLTV for the synthetic instance. One awkward form per element:
+  an entity reference in a title, a channel with several <display-name>s, a
+  channel with no icon, a guide channel nothing maps to, a channel new to this
+  feed, and three different ways of writing a timestamp.
+-->
+<tv generator-info-name="synthetic" generator-info-url="https://guide.example/">
+  <channel id="synth.sports">
+    <display-name>Synth Sports Guide</display-name>
+    <display-name lang="fr">Synth Sports (FR)</display-name>
+    <icon src="https://logos.example/synth-sports.png" />
+  </channel>
+  <channel id="synth.news">
+    <display-name>Synth News Guide</display-name>
+  </channel>
+  <channel id="synth.gap">
+    <display-name>Synth Gap Guide</display-name>
+  </channel>
+  <channel id="synth.unmapped">
+    <display-name>Synth Unmapped Guide</display-name>
+  </channel>
+  <channel id="synth.newcomer">
+    <display-name>Synth Newcomer Guide</display-name>
+  </channel>
+  <programme start="20260915120000 +0000" stop="20260915140000 +0000" channel="synth.sports">
+    <title>Rock &amp; Roll &lt;Live&gt;</title>
+    <sub-title>Part One</sub-title>
+    <desc>An ampersand, an angle bracket and an apostrophe: it&apos;s all here.</desc>
+    <category>Sports</category>
+    <episode-num system="xmltv_ns">1.4.</episode-num>
+    <new />
+  </programme>
+  <programme start="20260915140000 -0400" stop="20260915160000 -0400" channel="synth.sports">
+    <title>Offset Not UTC</title>
+    <desc>Written in a negative offset, which has to be normalised before it is stored.</desc>
+  </programme>
+  <programme start="20260915180000" stop="20260915190000" channel="synth.news">
+    <title>No Offset At All</title>
+    <desc>A timestamp with no zone, which XMLTV permits and every parser guesses at.</desc>
+  </programme>
+  <programme start="20260915200000 +0000" stop="20260915210000 +0000" channel="synth.unmapped">
+    <title>Nobody Is Watching</title>
+    <desc>No channel maps to this guide channel, so this programme is never stored.</desc>
+  </programme>
+  <programme start="20260915210000 +0000" stop="20260915220000 +0000" channel="synth.newcomer">
+    <title>Newcomer Programme</title>
+    <desc>Its guide channel is new to this feed, and nothing maps to it yet.</desc>
+  </programme>
+</tv>

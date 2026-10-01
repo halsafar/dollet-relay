@@ -1,0 +1,19 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/accounts/users/
+---
+count: number
+page: number
+pages: number
+results[].api_key: null|string
+results[].channel_profiles[]: empty|number
+results[].custom_properties: object
+results[].custom_properties.xc_password: string
+results[].email: string
+results[].id: number
+results[].is_active: bool
+results[].is_staff: bool
+results[].is_superuser: bool
+results[].stream_limit: number
+results[].user_level: number
+results[].username: string

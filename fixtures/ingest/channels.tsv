@@ -1,0 +1,12 @@
+Alpha HD	alpha.test	alpha.test	1
+Charlie Unquoted	charlie.test		2
+Delta, With Comma	delta.test		4
+Echo "Quoted" & Ampersand	echo.test	echo.test	5
+Foxtrot Number Collision	foxtrot.test		3
+Hotel URL Changes	hotel.test		8
+India Renamed	india.test		9
+Juliet Catchup	juliet.test		10
+Kilo No Tvg Id			11
+Lima Café Über	lima.test	lima.test	12
+Mike Second Group	mike.test		13
+November Appears This Run	november.test		14

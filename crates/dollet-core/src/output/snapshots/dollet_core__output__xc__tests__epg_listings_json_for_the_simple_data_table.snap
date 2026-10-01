@@ -1,0 +1,38 @@
+---
+source: crates/dollet-core/src/output/xc.rs
+expression: "epg_listings(&programs, &context())"
+---
+{
+  "epg_listings": [
+    {
+      "id": "1",
+      "epg_id": "5",
+      "title": "Tm93IFBsYXlpbmc=",
+      "lang": "",
+      "start": "2026-09-11 15:30:00",
+      "end": "2026-09-11 16:00:00",
+      "description": "Tm93IFBsYXlpbmcgZGVzY3JpcHRpb24=",
+      "channel_id": "101",
+      "start_timestamp": "1789140600",
+      "stop_timestamp": "1789142400",
+      "stream_id": "1",
+      "has_archive": 0,
+      "now_playing": 1
+    },
+    {
+      "id": "2",
+      "epg_id": "5",
+      "title": "VG9tICYgSmVycnk=",
+      "lang": "",
+      "start": "2026-09-11 16:00:00",
+      "end": "2026-09-11 16:30:00",
+      "description": "VG9tICYgSmVycnkgZGVzY3JpcHRpb24=",
+      "channel_id": "101",
+      "start_timestamp": "1789142400",
+      "stop_timestamp": "1789144200",
+      "stream_id": "1",
+      "has_archive": 0,
+      "now_playing": 0
+    }
+  ]
+}

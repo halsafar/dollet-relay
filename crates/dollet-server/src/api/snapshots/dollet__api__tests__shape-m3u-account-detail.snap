@@ -1,0 +1,25 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/m3u/accounts/1001/
+---
+account_type: string
+custom_properties.auto_enable_new_groups_live: bool
+file_path: string
+has_password: bool
+id: number
+is_active: bool
+last_message: string
+locked: bool
+max_streams: number
+name: string
+next_run_at: string
+priority: number
+progress: number
+refresh_interval_hours: number
+server_url: string
+stale_stream_days: number
+status: string
+stream_profile_id: number
+updated_at: string
+user_agent_id: number
+username: string

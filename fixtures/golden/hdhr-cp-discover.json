@@ -1,0 +1,1 @@
+{"FriendlyName": "Dollet HDHomeRun - Living Room", "ModelNumber": "HDTC-2US", "FirmwareName": "hdhomerun3_atsc", "FirmwareVersion": "20200101", "DeviceID": "dollet-hdhr-Living Room", "DeviceAuth": "test_auth_token", "BaseURL": "http://ipx.test:9191/hdhr/Living%20Room", "LineupURL": "http://ipx.test:9191/hdhr/Living%20Room/lineup.json", "TunerCount": 2}

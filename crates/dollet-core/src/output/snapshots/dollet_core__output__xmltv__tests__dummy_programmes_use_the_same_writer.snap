@@ -1,0 +1,11 @@
+---
+source: crates/dollet-core/src/output/xmltv.rs
+expression: "render(|w|\n{ w.write_programme(&Programme::from_dummy(\"101\", &dummy)).unwrap(); })"
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<tv generator-info-name="dollet-relay" generator-info-url="https://github.com/halsafar/dollet-relay">
+  <programme start="20260911160000 +0000" stop="20260911200000 +0000" channel="101">
+    <title>Channel A</title>
+    <desc>No guide data.</desc>
+  </programme>
+</tv>

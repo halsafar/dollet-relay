@@ -1,0 +1,11 @@
+---
+source: crates/dollet-core/src/output/m3u.rs
+expression: render_sample(&opts)
+---
+#EXTM3U x-tvg-url="http://ipx.test/output/epg" url-tvg="http://ipx.test/output/epg"
+#EXTINF:-1 tvg-id="12345" tvg-name="Channel A" tvg-logo="http://ipx.test/api/channels/logos/1/cache/" tvg-chno="101" tvc-guide-stationid="12345" group-title="News",Channel A
+http://ipx.test/proxy/ts/stream/00000000-0000-0000-0000-000000000001
+#EXTINF:-1 tvg-id="102.5" tvg-name="Channel B" tvg-logo="" tvg-chno="102.5" group-title="Default",Channel B
+http://ipx.test/proxy/ts/stream/00000000-0000-0000-0000-000000000002
+#EXTINF:-1 tvg-id="3" tvg-name="Channel & &quot;C&quot;" tvg-logo="http://ipx.test/api/channels/logos/3/cache/" tvg-chno="" group-title="News",Channel & "C"
+http://ipx.test/proxy/ts/stream/00000000-0000-0000-0000-000000000003

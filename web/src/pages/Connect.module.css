@@ -1,0 +1,44 @@
+/* The same card the Stats page uses, so the two screens read as one product. */
+.card {
+  border: 1px solid var(--mantine-color-dark-6);
+  border-radius: 7px;
+  background: var(--mantine-color-dark-8);
+  padding: 14px 16px;
+  max-width: 820px;
+}
+
+.cardTitle {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mantine-color-gray-2);
+}
+
+.seenRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 8px;
+  border: 1px solid var(--mantine-color-dark-6);
+  border-radius: 5px;
+}
+
+/* Takes the slack, so the badges and the button stay put as addresses vary in
+   length. */
+.seenUrl {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The control that governs every URL below it, kept in the same column as the
+   cards. As a page action it inherited the header's full width and sat several
+   hundred pixels right of the content it changes, and its own height — the
+   custom field carries a label and a description — stretched a header laid out
+   for a one-line title. */
+.picker {
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--mantine-color-dark-6);
+}

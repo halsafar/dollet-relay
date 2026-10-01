@@ -1,0 +1,26 @@
+# Build outputs
+/target
+/web/dist
+/web/node_modules
+
+# Local data: `/data` is the container's volume, `/.dev-data` is where
+# scripts/dev.sh points DOLLET_DATA_DIR.
+/data
+/.dev-data
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.dump
+
+# Traces and screenshots from a failed browser run. The browser itself lives in
+# ~/.cache/ms-playwright, outside the repo.
+/web/playwright-report/
+/web/test-results/
+
+# Agent tooling: the worktrees it creates inside the repo (checkouts of this
+# same repository, which untracked would list as new files on every
+# `git status`) and the sandboxed home it runs with.
+/.claude/
+/.kilo/
+/.hermes/
+/.claude-home/

@@ -1,0 +1,16 @@
+---
+source: crates/dollet-core/src/output/xc.rs
+expression: live_categories(&groups)
+---
+[
+  {
+    "category_id": "1",
+    "category_name": "News",
+    "parent_id": 0
+  },
+  {
+    "category_id": "2",
+    "category_name": "Sports & More",
+    "parent_id": 0
+  }
+]

@@ -1,0 +1,269 @@
+# The gate, on every push and pull request; on a release tag, the gate and then
+# the published image.
+#
+# Written to run unchanged on both Forgejo Actions and GitHub Actions, because
+# this repository is hosted on one and expects to move to the other. Three
+# things make that work, and each is a constraint on what may be added here:
+#
+#   1. **It lives in `.github/workflows/`.** Forgejo scans that path as well as
+#      `.forgejo/workflows/`, so one file serves both. If a Forgejo instance is
+#      configured not to, copy this file to `.forgejo/workflows/ci.yml` rather
+#      than letting the two drift.
+#   2. **Only `actions/*` actions are used.** Forgejo resolves actions from its
+#      own mirror rather than from github.com, and that mirror carries the
+#      `actions/*` org. A third-party action — a Rust cache action, a toolchain
+#      action — may simply not exist there, so the equivalent is done in shell.
+#   3. **No assumption about what the runner image holds.** GitHub's hosted
+#      image ships Rust and Node; a self-hosted Forgejo runner's container may
+#      ship neither. Every toolchain step checks before it installs.
+#
+# What it runs is `scripts/test.sh --local`, which is the same gate a developer
+# runs. CI deliberately does not assemble its own sequence of cargo and npm
+# commands: two gates that drift apart are worse than one, and the one that
+# drifts is always the one nobody runs by hand.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+    # `release.sh` pushes `v0.9.2`. The bare spelling is accepted too so a
+    # hand-pushed tag missing its prefix is not a silent no-op; `publish`
+    # refuses either unless it names the version in Cargo.toml.
+    tags: ["v[0-9]*", "[0-9]*"]
+  pull_request:
+
+# A second push to the same branch makes the first run pointless. Cancelling it
+# matters more on a self-hosted runner, where a queue is one machine.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  # A CI failure should name the assertion, not the thread that hit it.
+  RUST_BACKTRACE: 1
+
+jobs:
+  gate:
+    name: fmt, clippy, tests, web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      # rustup rather than a toolchain action: `rust-toolchain.toml` already
+      # pins the version and components, so all this has to do is make sure
+      # rustup exists and let it read that file.
+      - name: Rust toolchain
+        run: |
+          if ! command -v rustup >/dev/null 2>&1; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+              | sh -s -- -y --profile minimal --default-toolchain none
+            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+            export PATH="$HOME/.cargo/bin:$PATH"
+          fi
+          # `rustup install` with no argument installs what
+          # rust-toolchain.toml asks for. Naming no version here is the point:
+          # the pin lives in one file, and CI reads it like everything else.
+          rustup install
+          rustc --version
+
+      # Keyed on Cargo.lock, so a dependency change rebuilds and nothing else
+      # does. `target/` is included because a cold Rust build is the difference
+      # between a two-minute run and a twelve-minute one.
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target
+          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock', 'rust-toolchain.toml') }}
+          restore-keys: cargo-${{ runner.os }}-
+
+      # fmt, clippy with -D warnings, the Rust suite, then the web suite and
+      # the route manifest check. Identical to what a developer runs.
+      - name: scripts/test.sh --local
+        run: scripts/test.sh --local
+
+  # Kept separate so a browser failure is attributable at a glance, and so the
+  # gate above still reports when this is the thing that broke. It is outside
+  # scripts/test.sh for the same reason it is a second job here: it builds the
+  # SPA and the binary and downloads a browser, which is too slow to sit in
+  # front of every cargo test.
+  #
+  # Both of the most recent user-found bugs lived here rather than in the gate
+  # above — a hard refresh that downloaded the page, and a settings section
+  # that rendered nothing — so it earns the minutes.
+  browser:
+    name: browser journeys
+    runs-on: ubuntu-latest
+    # After the gate, not beside it: on a self-hosted runner both jobs would
+    # otherwise cold-build Rust on the same machine at once, and a browser run
+    # is not worth its minutes when the suite has already failed.
+    needs: gate
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Rust toolchain
+        run: |
+          if ! command -v rustup >/dev/null 2>&1; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+              | sh -s -- -y --profile minimal --default-toolchain none
+            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+            export PATH="$HOME/.cargo/bin:$PATH"
+          fi
+          rustup install
+          rustc --version
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target
+          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock', 'rust-toolchain.toml') }}
+          restore-keys: cargo-${{ runner.os }}-
+
+      # ~170 MB, and it does not change between runs. Keyed on the lockfile
+      # because the browser build Playwright wants is pinned by its version.
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('web/package-lock.json') }}
+
+      # Chromium's system libraries, which `e2e.sh` deliberately does not
+      # install: `--with-deps` runs apt as root, which a CI container is and a
+      # developer's machine is not. The browser itself is cached above.
+      - name: Chromium system dependencies
+        run: |
+          [[ -d web/node_modules ]] || npm --prefix web ci
+          cd web && npx playwright install --with-deps chromium
+
+      - name: scripts/e2e.sh
+        run: scripts/e2e.sh
+
+      # The trace of a failed run is the only way to see what the browser saw,
+      # and a CI machine is gone by the time anyone asks.
+      - name: Upload the failure trace
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            web/playwright-report
+            web/test-results
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # A pushed tag is a release. Both jobs above run against the tagged commit
+  # first, so a published image has the whole suite green behind it.
+  #
+  # `smoke.sh` is not run here: it drives podman directly, and this runner
+  # reaches podman only through its Docker-compatible socket, where a started
+  # container publishes its port on the host rather than in this job's network.
+  # `release.sh` smoke-tests the image before it creates the tag instead.
+  publish:
+    name: publish image
+    runs-on: ubuntu-latest
+    needs: [gate, browser]
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+
+      # The binary announces the version in Cargo.toml, not the tag, so a
+      # disagreeing tag would publish an image under a version it does not
+      # report. Plain x.y.z only, as `release.sh` enforces: anything else would
+      # still move `latest`. GITHUB_REF goes through the env, never
+      # interpolated into the script.
+      - name: Tag names the Cargo.toml version
+        id: version
+        env:
+          GIT_REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          tag="${GIT_REF#refs/tags/}"
+          version="${tag#v}"
+          cargo_version="$(sed -nE '0,/^version = "([^"]+)"/s//\1/p' Cargo.toml)"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "refusing: ${tag} is not an x.y.z version" >&2
+            exit 1
+          fi
+          if [[ "$version" != "$cargo_version" ]]; then
+            echo "refusing: tag ${tag} but Cargo.toml says ${cargo_version}" >&2
+            exit 1
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      # A standalone CLI rather than a Docker action: the self-hosted runner
+      # talks to podman's Docker-compatible socket and ships no docker binary.
+      # GitHub's image already has one.
+      - name: Docker CLI
+        run: |
+          if ! command -v docker >/dev/null 2>&1; then
+            curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-29.8.0.tgz \
+              | tar -xz -C /usr/local/bin --strip-components=1 docker/docker
+          fi
+          docker version
+
+      # Where the image goes is the forge's configuration, not the
+      # repository's: REGISTRY_URL and REGISTRY_ORG are Actions variables,
+      # set on this repository or inherited from its owner, beside the two
+      # secrets.
+      - name: Registry login
+        env:
+          REGISTRY_URL: ${{ vars.REGISTRY_URL }}
+          REGISTRY_ORG: ${{ vars.REGISTRY_ORG }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          set -euo pipefail
+          for name in REGISTRY_URL REGISTRY_ORG DOCKER_USERNAME DOCKER_PASSWORD; do
+            if [[ -z "${!name}" ]]; then
+              echo "refusing: ${name} is not set for this repository" >&2
+              exit 1
+            fi
+          done
+          echo "$DOCKER_PASSWORD" | docker login "$REGISTRY_URL" -u "$DOCKER_USERNAME" --password-stdin
+
+      # The classic builder, because podman's Docker-compatible API has no
+      # BuildKit. The tags are the three `release.sh` pushed before CI did;
+      # `latest` goes last so it never names an image whose version tag
+      # failed to push.
+      - name: Build and push
+        env:
+          DOCKER_BUILDKIT: "0"
+          REGISTRY_URL: ${{ vars.REGISTRY_URL }}
+          REGISTRY_ORG: ${{ vars.REGISTRY_ORG }}
+          VERSION: ${{ steps.version.outputs.version }}
+          SHA: ${{ steps.version.outputs.sha }}
+        run: |
+          set -euo pipefail
+          image="${REGISTRY_URL}/${REGISTRY_ORG}/dollet-relay"
+          docker build \
+            --file docker/Dockerfile \
+            --tag "${image}:${VERSION}" \
+            --tag "${image}:sha-${SHA}" \
+            --tag "${image}:latest" \
+            .
+          for tag in "$VERSION" "sha-${SHA}" latest; do
+            docker push "${image}:${tag}"
+          done
+          echo "published ${image}:${VERSION}"

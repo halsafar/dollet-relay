@@ -1,0 +1,15 @@
+.image {
+  display: block;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* A fixed box whether or not the artwork arrives, so a dead host cannot
+   reflow the rows around it. */
+.placeholder {
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--mantine-color-dark-5);
+  border-radius: 4px;
+  color: var(--mantine-color-dark-3);
+}

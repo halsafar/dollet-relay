@@ -1,0 +1,29 @@
+#EXTM3U x-tvg-url="http://provider.example/epg.xml"
+#EXTINF:-1 tvg-id="foxtrot.test" tvg-name="Foxtrot" tvg-chno="1" group-title="Filtered",Foxtrot Number Collision
+http://provider.example/live/fixtureuser/fixturepass/2001
+#EXTINF:-1 tvg-id="foxglove.test" tvg-name="Foxglove" tvg-chno="2" group-title="Filtered",Foxglove Excluded
+http://provider.example/live/fixtureuser/fixturepass/2002
+#EXTINF:-1 tvg-id="kilo.test" tvg-name="Kilo" tvg-chno="3" group-title="Filtered",Kilo Excluded
+http://provider.example/live/fixtureuser/fixturepass/2003
+#EXTINF:-1 tvg-id="mike.test" tvg-name="Mike" tvg-chno="4" group-title="Filtered",Mike Second Group
+http://provider.example/live/fixtureuser/fixturepass/2004
+#EXTINF:-1 tvg-id="delta.test" tvg-name="Delta" tvg-chno="5" group-title="Filtered",Delta, With Comma
+http://provider.example/live/fixtureuser/fixturepass/2005
+#EXTINF:-1 tvg-id="papa.test" tvg-name="Papa" tvg-chno="6" group-title="Filtered",Papa Echo Echo Repeat
+http://provider.example/live/fixtureuser/fixturepass/2006
+#EXTINF:-1 tvg-id="alpha.test" tvg-name="Alpha" tvg-chno="1" group-title="Filtered",Alpha Kept
+http://provider.example/live/fixtureuser/fixturepass/2007
+#EXTINF:-1 tvg-id="bravo.test" tvg-name="Bravo" tvg-chno="200" group-title="Filtered",Bravo Kept
+http://provider.example/live/fixtureuser/fixturepass/2008
+#EXTINF:-1 tvg-id="charlie.test" tvg-name="Charlie" group-title="Filtered",Charlie Kept
+http://provider.example/live/fixtureuser/fixturepass/2009
+#EXTINF:-1 tvg-id="delta2.test" tvg-name="Delta2" group-title="Filtered",Delta Kept
+http://provider.example/live/fixtureuser/fixturepass/2010
+#EXTINF:-1 tvg-id="echo2.test" tvg-name="Echo2" group-title="Filtered",Echo Kept
+http://provider.example/live/fixtureuser/fixturepass/2011
+#EXTINF:-1 tvg-id="golf2.test" tvg-name="Golf2" group-title="Filtered",Golf Kept
+http://provider.example/live/fixtureuser/fixturepass/2012
+#EXTINF:-1 tvg-id="hotel2.test" tvg-name="Hotel2" group-title="Filtered",Hotel Kept
+http://provider.example/live/fixtureuser/fixturepass/2013
+#EXTINF:-1 tvg-id="oscar.test" tvg-name="Oscar" tvg-chno="6" group-title="Filtered",Oscar Kept
+http://provider.example/live/fixtureuser/fixturepass/2014

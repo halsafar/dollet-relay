@@ -1,0 +1,150 @@
+---
+source: crates/dollet-core/src/output/xmltv.rs
+expression: "rendered.join(\"---\\n\")"
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <episode-num system="onscreen">E6</episode-num>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <episode-num system="onscreen">E1</episode-num>
+    <episode-num system="xmltv_ns">2.0.</episode-num>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <episode-num system="onscreen">E0</episode-num>
+    <episode-num system="xmltv_ns">0.0.</episode-num>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <length units="minutes">45</length>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <audio>
+      <stereo>mono</stereo>
+    </audio>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <length units="minutes">true</length>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <length units="minutes"></length>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <episode-num system="onscreen">E12</episode-num>
+    <episode-num system="xmltv_ns">2.11.</episode-num>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <episode-num system="xmltv_ns">0.0.</episode-num>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <episode-num system="xmltv_ns">0.0.</episode-num>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <rating system="TV Parental Guidelines">
+      <value>PG</value>
+    </rating>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <credits>
+      <director>Solo Dee</director>
+      <actor>Solo Ann</actor>
+    </credits>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <credits>
+    </credits>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <premiere />
+    <last-chance />
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <previously-shown />
+  </programme>
+---
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="1">
+    <title>Sparse</title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+  </programme>

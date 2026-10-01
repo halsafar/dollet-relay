@@ -1,0 +1,107 @@
+[
+  {
+    "GuideName": "CA FLEIMIR1 (FHD) (D)",
+    "GuideNumber": "1",
+    "Guide_ID": "1",
+    "Station": "1",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/91af9876-76cc-4bd1-bb7e-0d16a5af10a1?output_profile=1"
+  },
+  {
+    "GuideName": "FRUST  SKRAERD",
+    "GuideNumber": "2",
+    "Guide_ID": "2",
+    "Station": "2",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/437f0f70-4b16-4467-bb93-7ec635331f37?output_profile=1"
+  },
+  {
+    "GuideName": "US: PHROUR Gliars",
+    "GuideNumber": "3",
+    "Guide_ID": "3",
+    "Station": "3",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/1e085859-fd56-423a-9894-64d6edb28889?output_profile=1"
+  },
+  {
+    "GuideName": "US: GLOUX2",
+    "GuideNumber": "10",
+    "Guide_ID": "10",
+    "Station": "10",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/a6efc6ad-b968-496e-906b-de9614f010e0?output_profile=1"
+  },
+  {
+    "GuideName": "FLEIS PPV Criamir",
+    "GuideNumber": "19",
+    "Guide_ID": "19",
+    "Station": "19",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/12b4f4c6-211f-4331-88a9-e0c5ce808851?output_profile=1"
+  },
+  {
+    "GuideName": "FLEIS PPV Trust Chus",
+    "GuideNumber": "20",
+    "Guide_ID": "20",
+    "Station": "20",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/d361f5fb-47be-453d-ad62-c568a1c968dd?output_profile=1"
+  },
+  {
+    "GuideName": "FLEIS PPV Clent Criamir",
+    "GuideNumber": "21",
+    "Guide_ID": "21",
+    "Station": "21",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/6e53fa0c-22ad-492c-a152-3c96632f80a8?output_profile=1"
+  },
+  {
+    "GuideName": "FRUIVO Phrouns VRON Throns @ Plavo 12 2:00 CLOAX :FLEIMIR+  46",
+    "GuideNumber": "22",
+    "Guide_ID": "22",
+    "Station": "22",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/cc0f27df-c87a-457e-bf1c-da96bda87e31?output_profile=1"
+  },
+  {
+    "GuideName": "CA FLEIMIR5 (FHD) (D)",
+    "GuideNumber": "42",
+    "Guide_ID": "42",
+    "Station": "42",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/ff66a727-18ba-470e-bf98-be48f6c9ac7e?output_profile=1"
+  },
+  {
+    "GuideName": "CA FLEIMIR4 (FHD) (D)",
+    "GuideNumber": "43",
+    "Guide_ID": "43",
+    "Station": "43",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/5798602f-d27a-4fbf-88e5-aa198d8f72c3?output_profile=1"
+  },
+  {
+    "GuideName": ":FLEIMIR+  134",
+    "GuideNumber": "48",
+    "Guide_ID": "48",
+    "Station": "48",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/5fb56b8d-c03b-40a2-a1e3-69d6aed040a3?output_profile=1"
+  },
+  {
+    "GuideName": "2026 CRAST Crors Zraemir Shoark snavo Grurn and Zril A @ Plavo 12 2:30 CLOAX :FLEIMIR+  47",
+    "GuideNumber": "49",
+    "Guide_ID": "49",
+    "Station": "49",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/db9c3df8-f953-441d-bcc4-6ec8d6ae6ccd?output_profile=1"
+  },
+  {
+    "GuideName": "Test, \"Quoted\" & <Tagged>",
+    "GuideNumber": "900",
+    "Guide_ID": "900",
+    "Station": "900",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/aaaaaaaa-0000-4000-8000-000000000900?output_profile=1"
+  },
+  {
+    "GuideName": "Fractional Number",
+    "GuideNumber": "901.5",
+    "Guide_ID": "901.5",
+    "Station": "901.5",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/aaaaaaaa-0000-4000-8000-000000000901?output_profile=1"
+  },
+  {
+    "GuideName": "Первый канал",
+    "GuideNumber": "904",
+    "Guide_ID": "904",
+    "Station": "904",
+    "URL": "http://ipx.test:9191/proxy/ts/stream/aaaaaaaa-0000-4000-8000-000000000904?output_profile=1"
+  }
+]

@@ -1,0 +1,341 @@
+{
+  "available_channels": {
+    "171": {
+      "added": "1781293672",
+      "category_id": "6",
+      "category_ids": [
+        6
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "1",
+      "is_adult": 0,
+      "name": "CA FLEIMIR1 (FHD) (D)",
+      "num": 1,
+      "stream_icon": "http://ipx.test:9191/api/channels/logos/20/cache/",
+      "stream_id": 171,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "173": {
+      "added": "1781293814",
+      "category_id": "3",
+      "category_ids": [
+        3
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "2",
+      "is_adult": 0,
+      "name": "FRUST  SKRAERD",
+      "num": 2,
+      "stream_icon": "http://ipx.test:9191/api/channels/logos/1/cache/",
+      "stream_id": 173,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "174": {
+      "added": "1781293814",
+      "category_id": "3",
+      "category_ids": [
+        3
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "3",
+      "is_adult": 0,
+      "name": "US: PHROUR Gliars",
+      "num": 3,
+      "stream_icon": "http://ipx.test:9191/api/channels/logos/2/cache/",
+      "stream_id": 174,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "181": {
+      "added": "1781293814",
+      "category_id": "3",
+      "category_ids": [
+        3
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "10",
+      "is_adult": 0,
+      "name": "US: GLOUX2",
+      "num": 10,
+      "stream_icon": "http://ipx.test:9191/api/channels/logos/4/cache/",
+      "stream_id": 181,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "190": {
+      "added": "1781293814",
+      "category_id": "2",
+      "category_ids": [
+        2
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "19",
+      "is_adult": 0,
+      "name": "FLEIS PPV Criamir",
+      "num": 19,
+      "stream_icon": "http://ipx.test:9191/api/channels/logos/181/cache/",
+      "stream_id": 190,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "191": {
+      "added": "1781293814",
+      "category_id": "2",
+      "category_ids": [
+        2
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "20",
+      "is_adult": 0,
+      "name": "FLEIS PPV Trust Chus",
+      "num": 20,
+      "stream_icon": "http://ipx.test:9191/api/channels/logos/181/cache/",
+      "stream_id": 191,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "192": {
+      "added": "1781293814",
+      "category_id": "2",
+      "category_ids": [
+        2
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "21",
+      "is_adult": 0,
+      "name": "FLEIS PPV Clent Criamir",
+      "num": 21,
+      "stream_icon": "http://ipx.test:9191/api/channels/logos/14/cache/",
+      "stream_id": 192,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "193": {
+      "added": "1781293814",
+      "category_id": "7",
+      "category_ids": [
+        7
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "22",
+      "is_adult": 0,
+      "name": "FRUIVO Phrouns VRON Throns @ Plavo 12 2:00 CLOAX :FLEIMIR+  46",
+      "num": 22,
+      "stream_icon": null,
+      "stream_id": 193,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "213": {
+      "added": "1781293814",
+      "category_id": "6",
+      "category_ids": [
+        6
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "42",
+      "is_adult": 0,
+      "name": "CA FLEIMIR5 (FHD) (D)",
+      "num": 42,
+      "stream_icon": "http://ipx.test:9191/api/channels/logos/16/cache/",
+      "stream_id": 213,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "214": {
+      "added": "1781293814",
+      "category_id": "6",
+      "category_ids": [
+        6
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "43",
+      "is_adult": 0,
+      "name": "CA FLEIMIR4 (FHD) (D)",
+      "num": 43,
+      "stream_icon": "http://ipx.test:9191/api/channels/logos/17/cache/",
+      "stream_id": 214,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "219": {
+      "added": "1781293814",
+      "category_id": "7",
+      "category_ids": [
+        7
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "48",
+      "is_adult": 0,
+      "name": ":FLEIMIR+  134",
+      "num": 48,
+      "stream_icon": "http://ipx.test:9191/api/channels/logos/75/cache/",
+      "stream_id": 219,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "220": {
+      "added": "1781293814",
+      "category_id": "7",
+      "category_ids": [
+        7
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "49",
+      "is_adult": 0,
+      "name": "2026 CRAST Crors Zraemir Shoark snavo Grurn and Zril A @ Plavo 12 2:30 CLOAX :FLEIMIR+  47",
+      "num": 49,
+      "stream_icon": null,
+      "stream_id": 220,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "900": {
+      "added": "1789171200",
+      "category_id": "3",
+      "category_ids": [
+        3
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "900",
+      "is_adult": 0,
+      "name": "Test, \"Quoted\" & <Tagged>",
+      "num": 900,
+      "stream_icon": null,
+      "stream_id": 900,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "901": {
+      "added": "1789171200",
+      "category_id": "3",
+      "category_ids": [
+        3
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "901",
+      "is_adult": 0,
+      "name": "Fractional Number",
+      "num": 901,
+      "stream_icon": null,
+      "stream_id": 901,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "902": {
+      "added": "1789171200",
+      "category_id": "3",
+      "category_ids": [
+        3
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "4",
+      "is_adult": 0,
+      "name": "No Number",
+      "num": 4,
+      "stream_icon": null,
+      "stream_id": 902,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    },
+    "904": {
+      "added": "1789171200",
+      "category_id": "1",
+      "category_ids": [
+        1
+      ],
+      "custom_sid": "",
+      "direct_source": "",
+      "epg_channel_id": "904",
+      "is_adult": 0,
+      "name": "Первый канал",
+      "num": 904,
+      "stream_icon": null,
+      "stream_id": 904,
+      "stream_type": "live",
+      "tv_archive": 0,
+      "tv_archive_duration": 0
+    }
+  },
+  "categories": {
+    "live": [
+      {
+        "category_id": "6",
+        "category_name": "Shoark Blask",
+        "parent_id": 0
+      },
+      {
+        "category_id": "3",
+        "category_name": "US Blask",
+        "parent_id": 0
+      },
+      {
+        "category_id": "2",
+        "category_name": "PPV Skriask Brux",
+        "parent_id": 0
+      },
+      {
+        "category_id": "7",
+        "category_name": "FLEIMIR Gliars",
+        "parent_id": 0
+      }
+    ],
+    "movie": [],
+    "series": []
+  },
+  "server_info": {
+    "port": "9191",
+    "process": true,
+    "server_protocol": "http",
+    "time_now": "2026-09-12 05:29:20",
+    "timestamp_now": 1789190960,
+    "timezone": "UTC",
+    "url": "ipx.test"
+  },
+  "user_info": {
+    "active_cons": "0",
+    "allowed_output_formats": [
+      "ts",
+      "mp4"
+    ],
+    "auth": 1,
+    "exp_date": "1796966960",
+    "max_connections": "2",
+    "message": "dollet-relay XC API",
+    "password": "fixturepass",
+    "status": "Active",
+    "username": "fixtureadmin"
+  }
+}

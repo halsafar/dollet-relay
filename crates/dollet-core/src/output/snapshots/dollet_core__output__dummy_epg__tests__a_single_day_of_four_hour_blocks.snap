@@ -1,0 +1,10 @@
+---
+source: crates/dollet-core/src/output/dummy_epg.rs
+expression: "summarize(&generate(\"Channel A\", now(), &opts))"
+---
+2026-09-11 15:00 -> 2026-09-11 19:00 | Channel A | Afternoon on Channel A. No listing was published for this slot.
+2026-09-11 19:00 -> 2026-09-11 23:00 | Channel A | Channel A is on air without a listing.
+2026-09-11 23:00 -> 2026-09-12 03:00 | Channel A | Night-time placeholder on Channel A.
+2026-09-12 03:00 -> 2026-09-12 07:00 | Channel A | Overnight on Channel A. Nothing scheduled, everything still on.
+2026-09-12 07:00 -> 2026-09-12 11:00 | Channel A | Channel A, before anyone published a schedule.
+2026-09-12 11:00 -> 2026-09-12 15:00 | Channel A | Daytime placeholder on Channel A.

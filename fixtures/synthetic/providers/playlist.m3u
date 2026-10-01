@@ -1,0 +1,76 @@
+#EXTM3U x-tvg-url="https://guide.example/synth.xml" url-tvg="https://guide.example/synth.xml"
+# Hand-written, one entry per attribute form the parser has to survive. The
+# captured corpus in fixtures/ingest is one provider writing one way; this is
+# every way the others write, in one file.
+#
+# The first four URLs are the ones the synthetic seed already stores for
+# account 1001, verbatim, so a refresh against this file has to resolve them to
+# the rows that exist rather than reporting four new streams and expiring four
+# old ones.
+
+# Quoted attributes, the full set.
+#EXTINF:-1 tvg-id="synth.sports" tvg-name="Synth One HD" tvg-logo="https://logos.example/synth-sports.png" tvg-chno="1" group-title="Synth Sports" is_adult="0",Synth One HD
+https://provider.example/live/synthuser/synthpass/1001.ts
+
+# Unquoted values, which providers emit as often as not.
+#EXTINF:-1 tvg-id=synth.news tvg-name=Synth Two Feed tvg-chno=2.5 group-title=Synth News,Synth Two Feed
+https://provider.example/live/synthuser/synthpass/1003.ts
+
+# The group carried by the #EXTGRP directive instead of an attribute.
+#EXTINF:-1 tvg-name="Synth Unnumbered Feed"
+#EXTGRP: Synth News 
+https://provider.example/live/synthuser/synthpass/1004.ts
+
+# Player directives between the #EXTINF and its URL. They must not detach the
+# entry from the line below them.
+#EXTINF:-1 tvg-id="" tvg-chno="3" group-title="Synth News",Synth Quoted Feed
+#EXTVLCOPT:http-user-agent=VLC/3.0.21
+#KODIPROP:inputstream=inputstream.adaptive
+#EXTVLCOPT:network-caching=1000
+https://provider.example/live/synthuser/synthpass/1005.ts
+
+# No attributes at all: a name after the comma and nothing else. Lands in the
+# default group.
+#EXTINF:-1,Synth Bare Entry
+https://provider.example/live/synthuser/synthpass/2001.ts
+
+# `channel-number` rather than `tvg-chno`, and a real duration rather than -1.
+#EXTINF:3600 channel-number="42" group-title="Synth Sports",Synth Numbered By Other Name
+https://provider.example/live/synthuser/synthpass/2002.ts
+
+# Catch-up, in both spellings. 1.0 advertises none of it, so this exists to
+# prove the columns are carried rather than that the feature works.
+#EXTINF:-1 tvg-chno="43" group-title="Synth Sports" catchup="default" catchup-days="7" tv_archive="1" tv_archive_duration="3",Synth Catchup Feed
+https://provider.example/live/synthuser/synthpass/2003.ts
+
+# Adult, and in the group account 1001's filter excludes. Neither this entry
+# nor the group may survive the filter.
+#EXTINF:-1 tvg-chno="44" group-title="Synth Adults" is_adult="1",Synth Filtered Feed
+https://provider.example/live/synthuser/synthpass/2004.ts
+
+# A quote and non-ASCII in the display name, which the dedup hash escapes as
+# \uXXXX because Python's json.dumps does.
+#EXTINF:-1 tvg-chno="45" group-title="Synth Sports",Synth "Ünïcøde" Feed
+https://provider.example/live/synthuser/synthpass/2005.ts
+
+# VLC multicast syntax. ffmpeg does not understand the `@`, so it is stripped
+# on the way in and restored on the way out.
+#EXTINF:-1 tvg-chno="46" group-title="Synth Sports",Synth Multicast Feed
+udp://@239.255.0.1:1234
+
+# The same URL twice: a provider listing a channel under two categories. The
+# second is a duplicate by hash, not a second row.
+#EXTINF:-1 tvg-chno="47" group-title="Synth News",Synth One HD Again
+https://provider.example/live/synthuser/synthpass/1001.ts
+
+# In the auto-synced group, and new to this account: the refresh has to create a
+# channel for it inside the group's 200-299 range, numbered from the provider's
+# own tvg-chno and renamed by the group's pattern.
+#EXTINF:-1 tvg-chno="210" group-title="Synth News",Synth Auto Created Feed
+https://provider.example/live/synthuser/synthpass/2007.ts
+
+# An #EXTINF with no URL under it. Counted, not stored, and it must not swallow
+# the entry that follows.
+#EXTINF:-1 tvg-chno="48" group-title="Synth Sports",Synth Orphaned Entry
+#EXTINF:-1 tvg-chno="49" group-title="Synth Sports",Synth After The Orphan
+https://provider.example/live/synthuser/synthpass/2006.ts

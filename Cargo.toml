@@ -1,0 +1,89 @@
+[workspace]
+resolver = "3"
+members = ["crates/dollet-core", "crates/dollet-stream", "crates/dollet-server"]
+
+[workspace.package]
+version = "0.9.1"
+edition = "2024"
+rust-version = "1.98"
+license = "AGPL-3.0-only"
+repository = "https://github.com/halsafar/dollet-relay"
+
+# Every dependency the project uses is declared here and inherited by member
+# crates with `workspace = true`. Nothing is added to a member manifest:
+# several agents editing Cargo.lock at once is the likeliest way concurrent
+# work corrupts itself.
+[workspace.dependencies]
+dollet-core = { path = "crates/dollet-core" }
+dollet-stream = { path = "crates/dollet-stream" }
+
+tokio = { version = "1.44", features = ["rt-multi-thread", "macros", "fs", "process", "signal", "sync", "time", "io-util", "net"] }
+tokio-util = { version = "0.7", features = ["io", "codec"] }
+futures-util = "0.3"
+
+axum = { version = "0.8", features = ["ws", "macros", "query"] }
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.6", features = ["trace", "cors", "compression-gzip", "set-header", "catch-panic"] }
+
+sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio-rustls", "sqlite", "json", "chrono", "uuid", "migrate", "macros"] }
+
+dashmap = "6.1"
+parking_lot = "0.12"
+bytes = "1.10"
+
+# Only for killpg. A stream profile shaped `sh -c "streamlink | ffmpeg"`
+# orphans its grandchild otherwise, and that grandchild keeps holding a
+# provider connection after the limit guard has been released.
+libc = "0.2"
+
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+
+anyhow = "1.0"
+thiserror = "2.0"
+
+uuid = { version = "1.16", features = ["v4", "serde"] }
+chrono = { version = "0.4", default-features = false, features = ["std", "clock", "serde"] }
+
+reqwest = { version = "0.12", default-features = false, features = ["stream", "json", "rustls-tls", "gzip"] }
+url = "2.5"
+
+quick-xml = { version = "0.37", features = ["serialize"] }
+flate2 = "1.1"
+lzma-rs = "0.3"
+zip = { version = "2.4", default-features = false, features = ["deflate"] }
+
+regex = "1.11"
+fancy-regex = "0.14"
+rapidfuzz = "0.5"
+
+jsonwebtoken = "9.3"
+pbkdf2 = { version = "0.12", features = ["simple"] }
+sha2 = "0.10"
+base64 = "0.22"
+rand = "0.9"
+subtle = "2.6"
+
+rust-embed = { version = "8.6", features = ["mime-guess"] }
+mime_guess = "2.0"
+
+clap = { version = "4.5", features = ["derive", "env"] }
+shell-words = "1.1"
+
+# dev
+tempfile = "3.19"
+wiremock = "0.6"
+insta = { version = "1.42", features = ["json"] }
+pretty_assertions = "1.4"
+
+# No `panic = "abort"`: this is a long-lived daemon holding live streams, and
+# abort makes both `CatchPanicLayer` and the job `catch_unwind` guard inert, so
+# one panicking handler takes every viewer down with the process.
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = true

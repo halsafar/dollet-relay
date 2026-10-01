@@ -1,0 +1,31 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/core/settings/
+---
+count: number
+page: number
+pages: number
+results[].id: number
+results[].key: string
+results[].name: string
+results[].value.M3U_EPG: string
+results[].value.buffering_speed: number
+results[].value.buffering_timeout: number
+results[].value.channel_client_wait_period: number
+results[].value.channel_init_grace_period: number
+results[].value.channel_shutdown_delay: number
+results[].value.channel_step: number
+results[].value.default_stream_profile: number
+results[].value.default_user_agent: number
+results[].value.epg_auto_match_on_refresh: bool
+results[].value.epg_match_ignore_custom[]: empty
+results[].value.epg_match_ignore_prefixes[]: empty
+results[].value.epg_match_ignore_suffixes[]: empty
+results[].value.group_block_size: number
+results[].value.hdhr_output_profile_id: number
+results[].value.m3u_hash_key: string
+results[].value.max_system_events: number
+results[].value.new_client_behind_seconds: number
+results[].value.preferred_region: string
+results[].value.ring_max_bytes: number
+results[].value.ring_seconds: number

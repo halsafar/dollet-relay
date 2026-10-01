@@ -1,0 +1,20 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/epg/sources/1001/
+---
+custom_properties: object
+file_path: string
+has_password: bool
+id: number
+is_active: bool
+last_message: string
+name: string
+next_run_at: string
+priority: number
+progress: number
+refresh_interval_hours: number
+source_type: string
+status: string
+updated_at: string
+url: string
+username: string

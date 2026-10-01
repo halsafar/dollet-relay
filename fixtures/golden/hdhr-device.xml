@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+        <root>
+            <DeviceID>12345678</DeviceID>
+            <FriendlyName>Dollet HDHomeRun</FriendlyName>
+            <ModelNumber>HDTC-2US</ModelNumber>
+            <FirmwareName>hdhomerun3_atsc</FirmwareName>
+            <FirmwareVersion>20200101</FirmwareVersion>
+            <DeviceAuth>test_auth_token</DeviceAuth>
+            <BaseURL>http://ipx.test:9191/hdhr</BaseURL>
+            <LineupURL>http://ipx.test:9191/hdhr/lineup.json</LineupURL>
+        </root>

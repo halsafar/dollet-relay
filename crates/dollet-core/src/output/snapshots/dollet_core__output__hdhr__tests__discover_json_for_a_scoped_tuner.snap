@@ -1,0 +1,15 @@
+---
+source: crates/dollet-core/src/output/hdhr.rs
+expression: "discover(\"http://ipx.test/hdhr/Living%20Room/output_profile/3\", &identity, 10)"
+---
+{
+  "FriendlyName": "Dollet HDHomeRun - Living Room / 3",
+  "ModelNumber": "HDTC-2US",
+  "FirmwareName": "hdhomerun3_atsc",
+  "FirmwareVersion": "20200101",
+  "DeviceID": "dollet-hdhr-Living Room-3",
+  "DeviceAuth": "test_auth_token",
+  "BaseURL": "http://ipx.test/hdhr/Living%20Room/output_profile/3",
+  "LineupURL": "http://ipx.test/hdhr/Living%20Room/output_profile/3/lineup.json",
+  "TunerCount": 10
+}

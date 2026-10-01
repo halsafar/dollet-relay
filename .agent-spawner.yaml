@@ -1,0 +1,24 @@
+version: 1
+name: dollet-relay
+
+claude:
+  args: ["remote-control", "--name", "dollet-relay", "--spawn", "worktree", "--permission-mode", "auto"]
+  image:
+    profile: rust-web-full
+    profiles:
+      rust-web-full:
+        base: node:22-trixie-slim
+        system_packages:
+          - git
+          - ca-certificates
+          - curl
+          - ripgrep
+          - build-essential
+          - pkg-config
+        extra_build_steps:
+          - "RUN npx --yes playwright@1.63 install-deps chromium && rm -rf /var/lib/apt/lists/*"
+          - "ENV RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo PATH=/usr/local/cargo/bin:$PATH"
+          - "RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain 1.98.0 && rustup component add clippy rustfmt llvm-tools-preview"
+          - "RUN cargo install cargo-llvm-cov --locked"
+          - "RUN echo 'PATH=\"/usr/local/cargo/bin:$PATH\"' > /etc/profile.d/10-rust.sh"
+          - "ENV CARGO_HOME=/home/agent/.cargo"

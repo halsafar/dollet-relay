@@ -1,0 +1,28 @@
+---
+source: crates/dollet-core/src/output/xmltv.rs
+expression: xml
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<tv generator-info-name="dollet-relay" generator-info-url="https://github.com/halsafar/dollet-relay">
+  <channel id="a&#10;b.us">
+    <display-name>Bell &amp; &lt;Co&gt;</display-name>
+    <icon src="http://l/a.png?x=1&amp;y=2" />
+  </channel>
+  <programme start="20260911153000 +0000" stop="20260911160000 +0000" channel="a&#10;b.us">
+    <title>Tom &amp; Jerry </title>
+    <sub-title>Pilot</sub-title>
+    <desc>A description.</desc>
+    <category>News &amp; Weather</category>
+    <subtitles type="tele&#10;text">
+      <language>English</language>
+    </subtitles>
+    <rating system="a&#9;b">
+      <value>TV-14</value>
+    </rating>
+    <credits>
+      <actor role="Le&#10;ad">Ann</actor>
+    </credits>
+    <icon src="http://i/1.jpg?a=1&amp;b=2" />
+    <previously-shown start="2024&#10;01" channel="b&amp;c" />
+  </programme>
+</tv>

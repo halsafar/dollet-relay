@@ -1,0 +1,22 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/core/system-events/
+---
+count: number
+page: number
+pages: number
+results[].channel_name: null|string
+results[].channel_uuid: null|string
+results[].details.account_name: string
+results[].details.channels: number
+results[].details.from: number
+results[].details.programs: number
+results[].details.reason: string
+results[].details.source_name: string
+results[].details.streams_created: number
+results[].details.to: number
+results[].details.total_processed: number
+results[].details.user: string
+results[].event_type: string
+results[].id: number
+results[].occurred_at: string

@@ -1,0 +1,29 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/epg/grid/
+---
+channels[].channel_number: null|number
+channels[].epg_data_id: null|number
+channels[].epg_suggestion: null
+channels[].epg_suggestion.epg_data_id: number
+channels[].epg_suggestion.name: string
+channels[].epg_suggestion.score: number
+channels[].group_name: string
+channels[].id: number
+channels[].logo_url: null|string
+channels[].name: string
+channels[].programs[]: empty
+channels[].programs[].description: string
+channels[].programs[].end_time: string
+channels[].programs[].episode: null|number
+channels[].programs[].id: number|string
+channels[].programs[].is_live: bool
+channels[].programs[].is_new: bool
+channels[].programs[].is_premiere: bool
+channels[].programs[].season: null|number
+channels[].programs[].start_time: string
+channels[].programs[].sub_title: null|string
+channels[].programs[].title: string
+channels[].uuid: string
+end: string
+start: string
