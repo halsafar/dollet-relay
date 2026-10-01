@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 
 import { Sidebar } from './Sidebar.jsx';
 import { renderWithProviders } from '../test-utils.jsx';
@@ -27,6 +27,33 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.useRealTimers();
+});
+
+describe('the navigation', () => {
+  it('runs in the order an operator works, from adding a provider to administering the server', async () => {
+    // No count and no badge, so each link's text is its label alone.
+    channels.count.mockResolvedValue(null);
+    notifications.count.mockResolvedValue(0);
+    renderWithProviders(<Sidebar />);
+    await waitFor(() => expect(notifications.count).toHaveBeenCalled());
+
+    // The first link is the brand, which goes home rather than to a screen.
+    const [, ...screens] = within(
+      screen.getByRole('navigation', { name: 'Main' }),
+    ).getAllByRole('link');
+    expect(screens.map((link) => link.textContent)).toEqual([
+      'Sources',
+      'Groups',
+      'Channels',
+      'Logos',
+      'TV Guide',
+      'Connect',
+      'Stats',
+      'Notifications',
+      'Users',
+      'Settings',
+    ]);
+  });
 });
 
 describe('the notification badge', () => {
