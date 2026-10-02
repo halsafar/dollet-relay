@@ -180,7 +180,7 @@ Replace the row when it rises:
 
 | Commit | Date | Regions | Functions | Lines |
 |---|---|---|---|---|
-| `6d8ab0a` | 2026-10-01 | 92.18% | 95.25% | 95.08% |
+| `fe6bcd7` | 2026-10-01 | 92.32% | 95.27% | 95.20% |
 
 Of the must-be-100% list, the M3U parser, the XMLTV parser, and the M3U, HDHR
 and Xtream serializers are at 100% region, function and line. Three are not,
