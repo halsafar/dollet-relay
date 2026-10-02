@@ -3,7 +3,7 @@ resolver = "3"
 members = ["crates/dollet-core", "crates/dollet-stream", "crates/dollet-server"]
 
 [workspace.package]
-version = "0.9.3"
+version = "0.9.4"
 edition = "2024"
 rust-version = "1.98"
 license = "AGPL-3.0-only"
