@@ -230,6 +230,42 @@
       "auth": "bearer"
     },
     {
+      "name": "backups.list",
+      "method": "GET",
+      "path": "/api/core/backups/",
+      "auth": "bearer"
+    },
+    {
+      "name": "backups.create",
+      "method": "POST",
+      "path": "/api/core/backups/",
+      "auth": "bearer"
+    },
+    {
+      "name": "backups.remove",
+      "method": "DELETE",
+      "path": "/api/core/backups/dollet-backup-20261001-000000-manual.zip/",
+      "auth": "bearer"
+    },
+    {
+      "name": "backups.download",
+      "method": "GET",
+      "path": "/api/core/backups/dollet-backup-20261001-000000-manual.zip/download/",
+      "auth": "bearer"
+    },
+    {
+      "name": "backups.restore",
+      "method": "POST",
+      "path": "/api/core/backups/dollet-backup-20261001-000000-manual.zip/restore/",
+      "auth": "bearer"
+    },
+    {
+      "name": "backups.upload",
+      "method": "POST",
+      "path": "/api/core/backups/upload/",
+      "auth": "bearer"
+    },
+    {
       "name": "jobs.list",
       "method": "GET",
       "path": "/api/core/jobs/",

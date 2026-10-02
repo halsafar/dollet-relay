@@ -203,6 +203,24 @@ export const FIELD_META = {
       'group out on. 1 appends; 10 leaves nine free numbers between neighbours for a channel ' +
       'that arrives later. Changing it moves no existing channel.',
   },
+
+  'backup_settings.interval_hours': {
+    type: 'number',
+    label: 'Backup interval',
+    unit: 'hours',
+    help:
+      'How often a backup of the whole database is written to backups/ in the data ' +
+      'directory. 0 turns scheduled backups off and keeps the ones already taken. A new ' +
+      'interval applies after the run already scheduled.',
+  },
+  'backup_settings.keep': {
+    type: 'number',
+    label: 'Scheduled backups kept',
+    help:
+      'After each scheduled backup, the oldest scheduled ones beyond this many are deleted. ' +
+      'Backups taken by hand, uploaded, or taken before a restore are never counted or ' +
+      'deleted. At least 1; to stop scheduled backups, set the interval to 0.',
+  },
 };
 
 /** Order the sections appear in, most-used first. Unknown groups follow. */
@@ -212,6 +230,7 @@ export const GROUP_ORDER = [
   'epg_settings',
   'numbering_settings',
   'system_settings',
+  'backup_settings',
   'network_access',
 ];
 
@@ -223,6 +242,12 @@ export const GROUP_HELP = {
     'These shape automatic guide matching: Match unmapped channels on the Sources page, and ' +
     'matching on refresh when it is on. Only a channel with no guide is matched; one mapped by ' +
     'hand is never changed.',
+  backup_settings:
+    'A backup is the whole instance in one zip: channels, sources, settings, users with ' +
+    'their password hashes, and every provider credential, so keep downloaded ones somewhere ' +
+    'private. Restoring one replaces everything here and restarts the server, which comes ' +
+    'back by itself only under a supervisor that restarts it, such as Docker Compose with ' +
+    'restart: unless-stopped.',
   network_access:
     'Comma-separated CIDRs or single addresses per endpoint class, checked on every request. ' +
     'An endpoint with no entry is open to everyone; one with entries refuses every other ' +

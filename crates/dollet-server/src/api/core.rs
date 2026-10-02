@@ -161,7 +161,26 @@ async fn patch_setting(
         }
     }
 
+    if row.key == <settings::BackupSettings as settings::Group>::KEY {
+        let problems = settings::merge_backup(&state.db, &body.value)
+            .await?
+            .problems();
+        if !problems.is_empty() {
+            return Err(super::error::ApiError::invalid_fields(
+                "the backup settings cannot be used as they are",
+                problems,
+            ));
+        }
+    }
+
     settings::patch_by_key(&state.db, &row.key, &body.value).await?;
+
+    // The schedule lives in the job row, which is only written here and at
+    // boot; without this a new interval waits for the next restart.
+    if row.key == <settings::BackupSettings as settings::Group>::KEY {
+        super::jobs::sync_schedule(&state).await?;
+    }
+
     let updated = settings::by_key(&state.db, &row.key)
         .await?
         .ok_or(Error::NotFound)?;

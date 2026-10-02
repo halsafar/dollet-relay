@@ -24,3 +24,17 @@ export function absoluteTime(value, empty = '') {
   const at = new Date(value);
   return Number.isNaN(at.getTime()) ? String(value) : at.toLocaleString();
 }
+
+/**
+ * A byte count in binary units: `1.5 MB` below ten of a unit, `12 MB` above,
+ * and `0 B` for nothing or for a value that is not a number.
+ *
+ * @param {number} bytes
+ */
+export function formatBytes(bytes) {
+  if (!Number.isFinite(bytes) || bytes <= 0) return '0 B';
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const power = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  const value = bytes / 1024 ** power;
+  return `${value >= 10 || power === 0 ? Math.round(value) : value.toFixed(1)} ${units[power]}`;
+}

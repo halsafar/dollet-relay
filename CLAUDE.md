@@ -191,11 +191,11 @@ need the host's own cargo and npm.
 **In:** channels, streams, groups, channel profiles, logos; M3U and Xtream
 Codes ingest; XMLTV ingest, EPG matching, Dummy EPG; the streaming proxy with
 failover and output profiles; HDHR, `/output/m3u`, `/output/epg`, Xtream Codes
-server API (live actions); users, auth, API keys, settings; the web UI.
+server API (live actions); users, auth, API keys, settings; backup and restore
+of this instance; the web UI.
 
 **Out** — each a documented gap, rebuilt later if wanted: plugins, VOD, DVR,
-catch-up/timeshift, Schedules Direct, Comskip, webhooks, HLS and fMP4 output,
-backup and restore of this instance.
+catch-up/timeshift, Schedules Direct, Comskip, webhooks, HLS and fMP4 output.
 
 EPG matching is fuzzy only. A language-model tiebreaker for the ambiguous band
 would mean ONNX Runtime plus ~90 MB of weights; the band is surfaced in the UI

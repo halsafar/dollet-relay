@@ -1467,11 +1467,20 @@ async fn import_settings(
             }
         }
 
+        // Same key, different meaning: the source schedules by frequency and
+        // time of day, this build by an interval, and none of the fields
+        // carry over. Patched, it would be counted as imported while changing
+        // nothing; skipped, the instance keeps this build's default schedule.
+        if key == <settings::BackupSettings as settings::Group>::KEY {
+            tracing::debug!(key, "settings group not carried over");
+            continue;
+        }
+
         match settings::patch_by_key(sqlite, &key, &value).await {
             Ok(_) => report.add("core_setting", 1),
             Err(dollet_core::Error::NotFound) => {
-                // dvr_settings and backup_settings back features that are out
-                // of scope. Skipping them is a documented gap, not a failure.
+                // dvr_settings backs a feature that is out of scope. Skipping
+                // it is a documented gap, not a failure.
                 tracing::debug!(key, "settings group not in scope");
             }
             Err(e) => report.warn(format!("settings group `{key}` not imported: {e}")),

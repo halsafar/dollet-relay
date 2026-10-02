@@ -21,6 +21,7 @@
 
 mod artwork;
 pub mod auth;
+mod backups;
 mod channels;
 mod core;
 mod epg;
@@ -156,7 +157,7 @@ pub fn public_router() -> Router<AppState> {
 pub fn router() -> Router<AppState> {
     Router::new()
         .nest("/accounts", auth::router().merge(users::router()))
-        .nest("/core", core::router())
+        .nest("/core", core::router().merge(backups::router()))
         .nest(
             "/channels",
             channels::router()

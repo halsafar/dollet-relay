@@ -23,6 +23,8 @@ results[].value.epg_match_ignore_prefixes[]: empty
 results[].value.epg_match_ignore_suffixes[]: empty
 results[].value.group_block_size: number
 results[].value.hdhr_output_profile_id: number
+results[].value.interval_hours: number
+results[].value.keep: number
 results[].value.m3u_hash_key: string
 results[].value.max_system_events: number
 results[].value.new_client_behind_seconds: number

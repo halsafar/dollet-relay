@@ -28,6 +28,12 @@ import { discoverPath } from '../pages/connectUrls.js';
  * GET    /api/core/system-events/?limit=                      -> List<SystemEvent> (+)
  * GET    /api/core/jobs/                                      -> List<Job>
  * POST   /api/core/jobs/{key}/cancel/                         -> {cancelling}
+ * GET    /api/core/backups/                                   -> List<Backup>
+ * POST   /api/core/backups/                                   -> Backup (201)
+ * POST   /api/core/backups/upload/       <the zip itself>     -> Backup (201)
+ * GET    /api/core/backups/{name}/download/                   -> the zip
+ * POST   /api/core/backups/{name}/restore/       -> {restarting, pre_restore} (202)
+ * DELETE /api/core/backups/{name}/                            -> 204
  * GET    /api/notifications/                                  -> List<Notification>
  * GET    /api/notifications/count/                            -> {unacknowledged}
  * POST   /api/notifications/{id}/acknowledge/                 -> Notification
@@ -137,8 +143,8 @@ import { discoverPath } from '../pages/connectUrls.js';
  *
  * Settings are whole JSON blobs per section, matching `dollet_core::settings`:
  * `stream_settings`, `proxy_settings`, `network_access`, `system_settings`,
- * `epg_settings`, `numbering_settings`. A PATCH carries only the changed
- * fields; the server merges them into the stored group.
+ * `epg_settings`, `numbering_settings`, `backup_settings`. A PATCH carries only
+ * the changed fields; the server merges them into the stored group.
  *
  * @typedef {object} User
  * @property {number} id
@@ -1067,6 +1073,63 @@ export const jobs = {
    * @returns {Promise<{cancelling: boolean}>}
    */
   cancel: (key) => api.post(`/core/jobs/${encodeURIComponent(key)}/cancel/`),
+};
+
+/**
+ * Backups of this instance: zips of the whole database, kept in `backups/`
+ * beside it. A backup holds every password hash and provider credential, so
+ * every call here is admin-only.
+ *
+ * Addressed by file name, which the server derives and parses strictly; a name
+ * it did not write is a 404.
+ *
+ * @typedef {object} Backup
+ * @property {string} name
+ * @property {string} created_at
+ * @property {'manual'|'scheduled'|'uploaded'|'pre-restore'} trigger Why it
+ *   exists, which decides whether retention may delete it: only `scheduled`
+ *   ones are ever pruned.
+ * @property {number} size_bytes
+ * @property {string | null} version The build that wrote it. Null, with
+ *   `schema`, when its metadata cannot be read; it is still listed so it can
+ *   be deleted.
+ * @property {number | null} schema The newest migration in its database.
+ */
+export const backups = {
+  /** @returns {Promise<Backup[]>} Newest first. */
+  list: async () => rows(await api.get('/core/backups/'), '/api/core/backups/'),
+
+  /**
+   * A 409 while another backup is being written.
+   *
+   * @returns {Promise<Backup>}
+   */
+  create: () => api.post('/core/backups/'),
+
+  /** @returns {Promise<Blob>} */
+  download: (name) =>
+    api.get(`/core/backups/${encodeURIComponent(name)}/download/`, { blob: true }),
+
+  /**
+   * The file is the body, not a form field. The server checks it, names it for
+   * when it was made, and answers 400 with the reason when it is not a backup
+   * this build can restore.
+   *
+   * @param {Blob} file
+   * @returns {Promise<Backup>}
+   */
+  upload: (file) => api.post('/core/backups/upload/', file),
+
+  /**
+   * Replaces this whole instance with the backup, after taking a backup of it
+   * first, and restarts the server to do it. Accepted means the restart has
+   * begun, not that it has finished.
+   *
+   * @returns {Promise<{restarting: boolean, pre_restore: string}>}
+   */
+  restore: (name) => api.post(`/core/backups/${encodeURIComponent(name)}/restore/`),
+
+  remove: (name) => api.delete(`/core/backups/${encodeURIComponent(name)}/`),
 };
 
 /**

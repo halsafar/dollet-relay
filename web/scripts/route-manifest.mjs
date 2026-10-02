@@ -55,6 +55,12 @@ const ARGUMENTS = {
   'stats.nextSource': ['00000000-0000-0000-0000-000000000000'],
   'stats.changeSource': ['00000000-0000-0000-0000-000000000000', 1],
   'jobs.cancel': ['m3u_refresh:1'],
+  // A name in the server's own format, which is how the authorization matrix
+  // recognises the segment as a backup rather than as a literal path.
+  'backups.download': ['dollet-backup-20261001-000000-manual.zip'],
+  'backups.restore': ['dollet-backup-20261001-000000-manual.zip'],
+  'backups.remove': ['dollet-backup-20261001-000000-manual.zip'],
+  'backups.upload': [new Blob(['PK'], { type: 'application/zip' })],
   'settings.update': ['proxy_settings', {}],
   'systemEvents.list': [50],
 };

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 import { Settings } from './Settings.jsx';
 import {
+  backups,
   outputProfiles,
   settings as settingsApi,
   streamProfiles,
@@ -18,6 +19,15 @@ vi.mock('../api/resources.js', () => ({
   userAgents: { list: vi.fn() },
   streamProfiles: { list: vi.fn() },
   outputProfiles: { list: vi.fn() },
+  backups: {
+    list: vi.fn(),
+    create: vi.fn(),
+    download: vi.fn(),
+    upload: vi.fn(),
+    restore: vi.fn(),
+    remove: vi.fn(),
+  },
+  fetchVersion: vi.fn(),
 }));
 
 vi.mock('@mantine/notifications', () => ({
@@ -38,6 +48,13 @@ const STREAM_PROFILES = [
 const OUTPUT_PROFILES = [{ id: 2, name: 'AC3 audio' }];
 
 const GROUPS = [
+  // First, where the server's own order puts it nowhere near: the page orders
+  // the sections itself.
+  {
+    key: 'backup_settings',
+    name: 'Backups',
+    value: { interval_hours: 24, keep: 7 },
+  },
   {
     key: 'proxy_settings',
     name: 'Proxy Settings',
@@ -64,6 +81,7 @@ beforeEach(() => {
   userAgents.list.mockResolvedValue(USER_AGENTS);
   streamProfiles.list.mockResolvedValue(STREAM_PROFILES);
   outputProfiles.list.mockResolvedValue(OUTPUT_PROFILES);
+  backups.list.mockResolvedValue([]);
 });
 
 /**
@@ -98,8 +116,35 @@ describe('Settings page', () => {
       'Proxy Settings',
       'EPG Settings',
       'System Settings',
+      'Backups',
       'Network Access',
     ]);
+  });
+
+  it('lists the backups under the schedule that writes them', async () => {
+    const user = userEvent.setup();
+    settingsApi.update.mockResolvedValue({
+      key: 'backup_settings',
+      name: 'Backups',
+      value: { interval_hours: 6, keep: 7 },
+    });
+    renderWithProviders(<Settings />);
+    await screen.findByText('Proxy Settings');
+
+    const backupsSection = section('Backups');
+    expect(await backupsSection.findByText('No backups yet.')).toBeVisible();
+    expect(backupsSection.getByRole('button', { name: /Back up now/ })).toBeVisible();
+
+    const interval = backupsSection.getByRole('textbox', { name: /Backup interval/ });
+    await user.clear(interval);
+    await user.type(interval, '6');
+    await user.click(backupsSection.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() =>
+      expect(settingsApi.update).toHaveBeenCalledWith('backup_settings', {
+        interval_hours: 6,
+      }),
+    );
   });
 
   it('opens every section on load, not only the first', async () => {

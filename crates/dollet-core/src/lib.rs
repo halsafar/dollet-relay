@@ -5,6 +5,7 @@
 //! and `sync` are pure and take neither a database nor a clock.
 
 pub mod auth;
+pub mod backup;
 pub mod config;
 pub mod db;
 pub mod domain;

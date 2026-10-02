@@ -13,6 +13,7 @@
 [Quick start](#quick-start) ·
 [Configuration](#configuration) ·
 [Connecting](#connecting) ·
+[Backups](#backups) ·
 [Migrating](#migrating) ·
 [Missing features](#missing-features) ·
 [Development](#development)
@@ -140,6 +141,28 @@ You can force a specific stream path domain using `DOLLET_ADVERTISED_BASE_URL`.
 You can force a specific artwork/logo domain using `DOLLET_ARTWORK_BASE_URL`.
 
 
+## Backups
+
+**Settings → Backups.** A backup is one zip of the whole database: channels,
+sources, settings, and users with their password hashes and every provider
+credential, so keep downloaded ones somewhere private. They are written to
+`backups/` in the data directory (`/data/backups/` in the container).
+
+- **Scheduled** every 24 hours by default, keeping the newest 7 scheduled ones.
+  An interval of 0 turns them off. Backups taken by hand, uploaded, or taken
+  before a restore are never deleted by the schedule.
+- **Download** any backup from the list, and **upload** one to restore it here
+  or on another machine. An upload is checked before it is kept and refused,
+  with the reason, if it is not a backup this version can restore: one from a
+  newer version is refused, one from an older version is migrated forward.
+- **Restore** replaces everything in this instance with the backup. A backup of
+  the instance as it is now is taken first, then the server restarts to apply
+  it. Under Compose with `restart: unless-stopped`, as in the quick start, it
+  comes straight back. Run any other way, as a bare process or under a
+  supervisor that does not restart a process that exits cleanly, it stops and
+  has to be started again by hand. A backup from another instance also signs
+  everyone out.
+
 ## Migrating
 
 ### Dispatcharr
@@ -166,7 +189,7 @@ Your Dispatcharr username/password combo will now work to log you in.
 
 ## Missing Features
 
-- plugins, VOD, DVR/recordings, catch-up/timeshift, Schedules Direct, Comskip, webhooks, HLS and fMP4 output, LLM EPG matching, and backup/restore.
+- plugins, VOD, DVR/recordings, catch-up/timeshift, Schedules Direct, Comskip, webhooks, HLS and fMP4 output, and LLM EPG matching.
 
 ## Development
 

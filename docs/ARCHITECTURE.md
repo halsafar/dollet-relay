@@ -281,6 +281,56 @@ runs every migration in, so a rebuild of a table with cascading children
 deletes them and reports success. The Rust enum is the real constraint;
 `CHECK (x IN (...))` is avoided on any table with children.
 
+### Backups
+
+A backup is a zip of two entries: `dollet.sqlite`, and `backup.json`, which
+records the build that wrote it, when, why (by hand, on the schedule, uploaded,
+or before a restore) and the newest migration applied. The database is the
+whole instance; the cache beside it is rebuilt on demand, so nothing else
+travels. Every byte of it is streamed, through the zip writer, the upload and
+the download, because a database is the one thing here that can run to
+hundreds of megabytes.
+
+**The snapshot is `VACUUM INTO`, never a file copy.** This process always has
+writers, and a copy of a WAL database taken while one commits is torn: the
+main file and the WAL disagree about which pages are current. `VACUUM INTO`
+reads one snapshot and writes a compacted, self-contained file without
+stopping anyone. It is one statement, so the snapshot is held for as long as
+the copy takes and no longer.
+
+Backups are named by the server, `dollet-backup-<UTC stamp>-<why>.zip`, and
+the API addresses them by that name, which is parsed before it is ever joined
+onto a path. An upload or a restore is checked before anything is kept or
+replaced: exactly the two entries, read by name and never used as a path; a
+SQLite header; `PRAGMA integrity_check`; and a migration history this build
+can boot. A newer migration, or one whose checksum differs, would make the
+boot that applies it fail after the old database is already gone, so both are
+refused. An older schema is fine, because that boot migrates it.
+
+**A restore is a restart, not a swapped pool.** The pool is held by every
+handler, stream session and job, so the file under it cannot be changed while
+the process runs. A restore takes a backup of the current instance first, and
+restores nothing if that fails; stages the chosen database beside the live one;
+and asks for the same graceful shutdown SIGTERM gets, so streams end and jobs
+drain. The next boot moves the staged file into place before the pool opens,
+removing the old WAL and shared-memory files first: left beside the new
+database, SQLite would replay the old instance's pages onto it. A staged file
+that cannot be moved stops the boot rather than serving the database the
+operator was told had been replaced.
+
+That makes a restarting supervisor a requirement. The process exits 0, which
+Compose's `restart: unless-stopped` answers by starting it again; a bare
+process, or a supervisor that restarts only on failure, stays stopped, and the
+UI says so. Restoring another instance's backup also replaces the key that
+signs sessions, so everyone is signed out.
+
+**Retention counts scheduled backups only.** After each scheduled run the
+oldest scheduled ones beyond the configured count are deleted. A backup taken
+by hand, uploaded, or taken before a restore was made on purpose, and a timer
+is not what should delete it. A count of zero is refused: it would delete each
+scheduled backup as it was written, a schedule that protects nothing while
+looking switched on.
+
 ## The scheduler
 
 One in-process pool of twenty, a per-key guard so each account and source
@@ -291,7 +341,7 @@ waiting on someone else's HTTP rather than on this process.
 One pool rather than one per class: a second would exist so that a three-hour
 ingest cannot occupy a slot a user-facing action needs, and there are no
 user-facing jobs here to protect. Work is on-demand except provider and guide
-refreshes, which run on their own intervals. A newly registered job's first run
+refreshes and the scheduled backup, which run on their own intervals. A newly registered job's first run
 is scheduled a full interval out, so a fresh or imported instance is refreshed
 once by hand.
 

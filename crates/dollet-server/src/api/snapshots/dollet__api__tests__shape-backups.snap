@@ -1,0 +1,13 @@
+---
+source: crates/dollet-server/src/api/tests.rs
+expression: /api/core/backups/
+---
+count: number
+page: number
+pages: number
+results[].created_at: string
+results[].name: string
+results[].schema: number
+results[].size_bytes: number
+results[].trigger: string
+results[].version: string

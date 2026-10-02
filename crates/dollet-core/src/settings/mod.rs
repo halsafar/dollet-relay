@@ -1,7 +1,8 @@
 //! Runtime settings, database backed.
 //!
 //! Grouped JSON settings: `stream_settings`, `proxy_settings`,
-//! `network_access`, `system_settings`, `epg_settings`, `numbering_settings`.
+//! `network_access`, `system_settings`, `epg_settings`, `numbering_settings`,
+//! `backup_settings`.
 //! Every default has a reason of its own, stated on the field.
 //!
 //! **Every field here is read by something.** A knob that is stored, shown in
@@ -94,6 +95,14 @@ pub async fn merge_numbering(
         .map_err(|e| crate::Error::invalid(format!("numbering_settings: {e}")))
 }
 
+/// The backup settings as they would be after `value` is applied, for the API
+/// to report field by field before `patch_by_key` refuses it whole.
+pub async fn merge_backup(pool: &SqlitePool, value: &serde_json::Value) -> Result<BackupSettings> {
+    let current = serde_json::to_value(load::<BackupSettings>(pool).await?)?;
+    serde_json::from_value(merge(current, value))
+        .map_err(|e| crate::Error::invalid(format!("{}: {e}", BackupSettings::KEY)))
+}
+
 /// Overlay a partial object onto the stored one.
 ///
 /// Two rules, and both exist because the Settings page PATCHes one field at a
@@ -184,6 +193,7 @@ async fn typed_value(pool: &SqlitePool, key: &str) -> Result<Option<serde_json::
         SystemSettings::KEY => serde_json::to_value(load::<SystemSettings>(pool).await?)?,
         EpgSettings::KEY => serde_json::to_value(load::<EpgSettings>(pool).await?)?,
         NumberingSettings::KEY => serde_json::to_value(load::<NumberingSettings>(pool).await?)?,
+        BackupSettings::KEY => serde_json::to_value(load::<BackupSettings>(pool).await?)?,
         // A row this build does not know about is not served at all, so a
         // future secret parked in this table cannot leak through the list.
         _ => return Ok(None),
@@ -230,6 +240,19 @@ pub async fn patch_by_key(
             let current = serde_json::to_value(load::<NumberingSettings>(pool).await?)?;
             let candidate: NumberingSettings = serde_json::from_value(merge(current, value))
                 .map_err(|e| crate::Error::invalid(format!("{}: {e}", NumberingSettings::KEY)))?;
+            let problems = candidate.problems();
+            if !problems.is_empty() {
+                let list: Vec<String> = problems
+                    .iter()
+                    .map(|(field, reason)| format!("{field} {reason}"))
+                    .collect();
+                return Err(crate::Error::invalid(list.join("; ")));
+            }
+            save(pool, &candidate).await?;
+            serde_json::to_value(candidate)?
+        }
+        BackupSettings::KEY => {
+            let candidate = merge_backup(pool, value).await?;
             let problems = candidate.problems();
             if !problems.is_empty() {
                 let list: Vec<String> = problems
@@ -472,6 +495,51 @@ impl NumberingSettings {
     }
 }
 
+/// When scheduled backups run and how many of them are kept.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct BackupSettings {
+    /// Hours between scheduled backups; 0 turns them off. A day, so the most
+    /// curation a bad edit or a dead disk can cost is one day's, for one
+    /// database-sized file a night.
+    pub interval_hours: u32,
+    /// Scheduled backups kept; the oldest beyond this are deleted after each
+    /// run. A week of nightly ones, long enough to notice a mistake and reach
+    /// back past it; otherwise arbitrary. Backups made by hand, uploaded, or
+    /// taken before a restore are never counted or deleted.
+    pub keep: u32,
+}
+
+impl Default for BackupSettings {
+    fn default() -> Self {
+        Self {
+            interval_hours: 24,
+            keep: 7,
+        }
+    }
+}
+
+impl Group for BackupSettings {
+    const KEY: &'static str = "backup_settings";
+    const NAME: &'static str = "Backups";
+}
+
+impl BackupSettings {
+    /// Field-level reasons the values cannot be used, empty when they can.
+    pub fn problems(&self) -> Vec<(&'static str, String)> {
+        let mut problems = Vec::new();
+        // Zero would delete each scheduled backup as soon as it was written: a
+        // schedule that protects nothing while looking switched on.
+        if self.keep == 0 {
+            problems.push((
+                "keep",
+                "must be at least 1; to stop scheduled backups, set the interval to 0".to_owned(),
+            ));
+        }
+        problems
+    }
+}
+
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct EpgSettings {
@@ -530,6 +598,48 @@ mod tests {
             load::<NetworkAccess>(&pool).await.unwrap(),
             NetworkAccess::default()
         );
+        assert_eq!(
+            load::<BackupSettings>(&pool).await.unwrap(),
+            BackupSettings::default()
+        );
+    }
+
+    /// `settings::all` lists only rows that exist, so a group without one is
+    /// a section the Settings page never shows.
+    #[tokio::test]
+    async fn the_backup_settings_have_a_row_to_be_listed_from() {
+        let pool = pool().await;
+        let row = by_key(&pool, BackupSettings::KEY)
+            .await
+            .unwrap()
+            .expect("no backup_settings row");
+        assert_eq!(row.name, BackupSettings::NAME);
+        assert_eq!(
+            row.value,
+            serde_json::json!({"interval_hours": 24, "keep": 7})
+        );
+    }
+
+    #[tokio::test]
+    async fn keeping_no_scheduled_backups_is_refused_before_it_is_stored() {
+        let pool = pool().await;
+        let refused =
+            patch_by_key(&pool, BackupSettings::KEY, &serde_json::json!({"keep": 0})).await;
+        assert!(
+            matches!(&refused, Err(crate::Error::Invalid(message)) if message.contains("keep")),
+            "{refused:?}"
+        );
+        assert_eq!(load::<BackupSettings>(&pool).await.unwrap().keep, 7);
+
+        let saved = patch_by_key(
+            &pool,
+            BackupSettings::KEY,
+            &serde_json::json!({"interval_hours": 0}),
+        )
+        .await
+        .unwrap();
+        assert_eq!(saved["interval_hours"], 0);
+        assert_eq!(saved["keep"], 7);
     }
 
     /// Every behaviour-changing default, beside its reason.
@@ -561,6 +671,10 @@ mod tests {
         assert!(epg.epg_match_ignore_prefixes.is_empty());
         assert!(epg.epg_match_ignore_suffixes.is_empty());
         assert!(epg.epg_match_ignore_custom.is_empty());
+        let backup = BackupSettings::default();
+        assert_eq!(backup.interval_hours, 24);
+        assert_eq!(backup.keep, 7);
+        assert!(backup.problems().is_empty());
 
         // Each of these has a reason of its own.
 

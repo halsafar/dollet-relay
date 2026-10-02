@@ -112,6 +112,7 @@ pub async fn start(state: AppState) -> Result<(), Error> {
     }
 
     register(super::ingest::handlers());
+    register(super::backups::handlers());
     sync_schedule(&state).await?;
 
     tokio::spawn(async move {
@@ -128,10 +129,22 @@ pub async fn start(state: AppState) -> Result<(), Error> {
     Ok(())
 }
 
-/// Register one job per active provider account and EPG source, and drop the
-/// rows for anything that no longer exists.
+/// Register one job per active provider account and EPG source, and the
+/// scheduled backup, and drop the rows for anything that no longer exists.
 pub async fn sync_schedule(state: &AppState) -> Result<(), Error> {
     let mut wanted: Vec<String> = Vec::new();
+
+    let backup: dollet_core::settings::BackupSettings =
+        dollet_core::settings::load(&state.db).await?;
+    jobs::ensure(
+        &state.db,
+        super::backups::JOB_KEY,
+        super::backups::KIND,
+        &serde_json::json!({}),
+        (backup.interval_hours > 0).then(|| i64::from(backup.interval_hours) * 3600),
+    )
+    .await?;
+    wanted.push(super::backups::JOB_KEY.to_owned());
 
     for source in db::epg::list_sources(&state.db).await? {
         let key = super::ingest::epg::job_key(source.id);
@@ -173,7 +186,11 @@ pub async fn sync_schedule(state: &AppState) -> Result<(), Error> {
     // save — so anything else that ever models itself as a job (a DVR recording
     // is the obvious one) would disappear the next time the operator edited a
     // source, with no error and no log line.
-    let owned = [super::ingest::epg::KIND, super::ingest::m3u::KIND];
+    let owned = [
+        super::ingest::epg::KIND,
+        super::ingest::m3u::KIND,
+        super::backups::KIND,
+    ];
     for job in jobs::list(&state.db).await? {
         if owned.contains(&job.kind.as_str()) && !wanted.contains(&job.key) {
             jobs::remove(&state.db, &job.key).await?;

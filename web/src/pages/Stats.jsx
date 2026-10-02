@@ -37,6 +37,7 @@ import { useSession } from '../auth/session.js';
 import { useLiveStats } from './useLiveStats.js';
 import classes from './Stats.module.css';
 import { RowAction } from '../components/RowAction.jsx';
+import { formatBytes } from '../format.js';
 
 /** Seconds as `1:05:30` or `5:30`, for a progress readout. */
 function formatClock(seconds) {
@@ -55,14 +56,6 @@ const PHASE_COLORS = {
   failed: 'red',
   stopped: 'gray',
 };
-
-function formatBytes(bytes) {
-  if (!Number.isFinite(bytes) || bytes <= 0) return '0 B';
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const power = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
-  const value = bytes / 1024 ** power;
-  return `${value >= 10 || power === 0 ? Math.round(value) : value.toFixed(1)} ${units[power]}`;
-}
 
 function formatSince(from, now = Date.now()) {
   return formatClock((now - new Date(from).getTime()) / 1000);

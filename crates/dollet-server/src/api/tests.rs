@@ -1328,6 +1328,7 @@ async fn settings_come_back_as_the_seven_groups_and_never_the_signing_key() {
             "system_settings",
             "epg_settings",
             "numbering_settings",
+            "backup_settings",
         ]
     );
     assert!(!body.to_string().contains("jwt_secret"));
@@ -6649,6 +6650,7 @@ async fn the_shapes_the_spa_reads_are_pinned() {
         ("channel-profiles", "/api/channels/profiles/"),
         ("streams", "/api/channels/streams/"),
         ("jobs", "/api/core/jobs/"),
+        ("backups", "/api/core/backups/"),
         ("settings", "/api/core/settings/"),
         ("settings-detail", "/api/core/settings/proxy_settings/"),
         ("stream-profiles", "/api/core/streamprofiles/"),
@@ -6667,6 +6669,16 @@ async fn the_shapes_the_spa_reads_are_pinned() {
         ("notifications-count", "/api/notifications/count/"),
         ("proxy-stats", "/api/proxy/stats/"),
     ];
+
+    // Backups live on disk rather than in the seed, and an empty list pins
+    // nothing.
+    dollet_core::backup::take(
+        &app.state.db,
+        &app.state.config.backups_dir(),
+        dollet_core::backup::Trigger::Manual,
+    )
+    .await
+    .expect("a backup to list");
 
     let mut unpinned_paths: Vec<String> = Vec::new();
     // `users/me/` answers about whoever asked, and the admin is the one user
@@ -7086,6 +7098,9 @@ impl Route {
 /// in the table reads.
 fn authorization_matrix() -> Vec<Route> {
     use Access::{Admin, Authenticated, Closed, Public, XtreamQuery};
+    // Not the manifest's name, as the ids here are not its `1`: the two meet
+    // through `route_template`.
+    const BACKUP: &str = "dollet-backup-20260101-000000-scheduled.zip";
 
     let mut routes = vec![
         // --- accounts
@@ -7202,6 +7217,23 @@ fn authorization_matrix() -> Vec<Route> {
         Route::new("PATCH", "/api/core/outputprofiles/1001/", Admin),
         Route::new("PUT", "/api/core/outputprofiles/1001/", Admin),
         Route::new("DELETE", "/api/core/outputprofiles/1001/", Admin),
+        // A backup is every password hash, provider credential and the session
+        // signing key. The named one does not exist, so the admin's pass is a
+        // 404 rather than a restart.
+        Route::new("GET", "/api/core/backups/", Admin),
+        Route::new("POST", "/api/core/backups/", Admin),
+        Route::new("POST", "/api/core/backups/upload/", Admin),
+        Route::new(
+            "GET",
+            format!("/api/core/backups/{BACKUP}/download/"),
+            Admin,
+        ),
+        Route::new(
+            "POST",
+            format!("/api/core/backups/{BACKUP}/restore/"),
+            Admin,
+        ),
+        Route::new("DELETE", format!("/api/core/backups/{BACKUP}/"), Admin),
         // --- epg
         Route::new("GET", "/api/epg/sources/", Admin),
         Route::new("POST", "/api/epg/sources/", Admin),
@@ -7324,6 +7356,8 @@ fn route_template(path: &str) -> String {
                 "{id}".to_owned()
             } else if uuid::Uuid::parse_str(segment).is_ok() {
                 "{uuid}".to_owned()
+            } else if dollet_core::backup::BackupName::parse(segment).is_some() {
+                "{backup}".to_owned()
             } else if job_key
                 .rsplit_once(':')
                 .is_some_and(|(kind, id)| !kind.is_empty() && id.parse::<i64>().is_ok())
@@ -7399,6 +7433,13 @@ async fn every_route_admits_exactly_the_principals_it_should() {
 
         for route in &routes {
             let expected = route.expected(who);
+            // The admin's press of "Back up now" holds the process-wide
+            // single-flight, which a backup test running alongside would read
+            // as its own 409.
+            let _serial = match route.path.starts_with("/api/core/backups/") {
+                true => Some(backups::SERIAL.lock().await),
+                false => None,
+            };
             let status = match route.solo {
                 true => {
                     let app = TestApp::synthetic().await;
@@ -10471,3 +10512,5 @@ async fn a_full_range_is_a_notification_until_a_refresh_finds_room_again() {
         "the condition was fixed and the notification stayed"
     );
 }
+
+mod backups;

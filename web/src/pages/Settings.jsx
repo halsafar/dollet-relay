@@ -28,6 +28,7 @@ import {
   userAgents,
 } from '../api/resources.js';
 import { useResource } from '../api/useResource.js';
+import { BackupList } from './BackupList.jsx';
 import {
   FIELD_META,
   GROUP_HELP,
@@ -42,6 +43,9 @@ import {
 
 /** The one group with its own renderer and its own save rule. */
 const NETWORK_ACCESS = 'network_access';
+
+/** Ordinary fields, with the backups their schedule writes listed under them. */
+const BACKUPS = 'backup_settings';
 
 /** Not a server group: this browser's own, applied as it is chosen rather than saved. */
 const APPEARANCE = 'appearance';
@@ -333,6 +337,8 @@ function SettingsSection({ group, references, onSaved }) {
           Save
         </Button>
       </Group>
+
+      {group.key === BACKUPS && <BackupList />}
     </Stack>
   );
 }

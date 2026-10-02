@@ -125,6 +125,17 @@ impl Config {
         self.data_dir.join("cache")
     }
 
+    pub fn backups_dir(&self) -> PathBuf {
+        self.data_dir.join("backups")
+    }
+
+    /// A database waiting to replace [`Self::db_path`] at the next boot. It is
+    /// applied before the pool opens, because nothing may hold the file being
+    /// replaced; see `backup::apply_staged`.
+    pub fn staged_restore_path(&self) -> PathBuf {
+        self.data_dir.join("dollet.sqlite.restore")
+    }
+
     pub fn from_env() -> Result<Self, ConfigError> {
         let listen = match std::env::var("DOLLET_LISTEN") {
             Ok(raw) => parse_listen(&raw)?,
@@ -259,6 +270,14 @@ mod tests {
             PathBuf::from("/tmp/dollet-relay/dollet.sqlite")
         );
         assert_eq!(cfg.cache_dir(), PathBuf::from("/tmp/dollet-relay/cache"));
+        assert_eq!(
+            cfg.backups_dir(),
+            PathBuf::from("/tmp/dollet-relay/backups")
+        );
+        assert_eq!(
+            cfg.staged_restore_path(),
+            PathBuf::from("/tmp/dollet-relay/dollet.sqlite.restore")
+        );
     }
 
     #[test]

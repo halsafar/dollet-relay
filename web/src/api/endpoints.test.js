@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { api, rootApi } from './client.js';
 import {
   auth,
+  backups,
   channelGroups,
   channelProfiles,
   channels,
@@ -489,6 +490,37 @@ describe('job endpoints', () => {
   it('escapes a key that would otherwise change the path', async () => {
     await jobs.cancel('weird/key');
     expect(api.post).toHaveBeenCalledWith('/core/jobs/weird%2Fkey/cancel/');
+  });
+});
+
+describe('backup endpoints', () => {
+  const NAME = 'dollet-backup-20261001-090807-manual.zip';
+
+  it('lists, takes, restores and deletes by file name', async () => {
+    await backups.list();
+    expect(api.get).toHaveBeenCalledWith('/core/backups/');
+
+    await backups.create();
+    expect(api.post).toHaveBeenCalledWith('/core/backups/');
+
+    await backups.restore(NAME);
+    expect(api.post).toHaveBeenCalledWith(`/core/backups/${NAME}/restore/`);
+
+    await backups.remove(NAME);
+    expect(api.delete).toHaveBeenCalledWith(`/core/backups/${NAME}/`);
+  });
+
+  it('downloads as a file rather than as text', async () => {
+    await backups.download(NAME);
+    expect(api.get).toHaveBeenCalledWith(`/core/backups/${NAME}/download/`, {
+      blob: true,
+    });
+  });
+
+  it('uploads the file as the body, not wrapped in a form', async () => {
+    const file = new Blob(['PK'], { type: 'application/zip' });
+    await backups.upload(file);
+    expect(api.post).toHaveBeenCalledWith('/core/backups/upload/', file);
   });
 });
 

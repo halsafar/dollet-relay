@@ -2,6 +2,7 @@ mod api;
 #[cfg(test)]
 mod contract;
 mod health;
+mod restart;
 mod spa;
 #[cfg(test)]
 mod test_support;
@@ -234,6 +235,45 @@ async fn open_database(config: &Config) -> anyhow::Result<SqlitePool> {
     tokio::fs::create_dir_all(config.cache_dir())
         .await
         .with_context(|| format!("creating cache dir {}", config.cache_dir().display()))?;
+    tokio::fs::create_dir_all(config.backups_dir())
+        .await
+        .with_context(|| format!("creating backups dir {}", config.backups_dir().display()))?;
+
+    // Before the pool exists, because nothing may hold the file being
+    // replaced. A staged restore that cannot be moved stops the boot: serving
+    // the old database to an operator who was told it had been replaced is
+    // worse than not starting.
+    let staged = config.staged_restore_path();
+    if tokio::fs::try_exists(&staged)
+        .await
+        .with_context(|| format!("looking for a staged restore at {}", staged.display()))?
+    {
+        dollet_core::backup::apply_staged(&staged, &config.db_path()).with_context(|| {
+            format!(
+                "a restore is staged at {} but could not be moved over {}",
+                staged.display(),
+                config.db_path().display()
+            )
+        })?;
+        tracing::info!(
+            database = %config.db_path().display(),
+            "applied the staged restore; this instance now runs on the backup's database"
+        );
+    }
+
+    // Nothing is mid-write before the pool opens, so anything unfinished is
+    // left over from a process that died writing it.
+    for dir in [config.data_dir.clone(), config.backups_dir()] {
+        match dollet_core::backup::sweep(&dir) {
+            Ok(0) => {}
+            Ok(removed) => {
+                tracing::info!(dir = %dir.display(), removed, "removed unfinished backup files")
+            }
+            Err(e) => {
+                tracing::warn!(dir = %dir.display(), error = %e, "could not sweep unfinished backup files")
+            }
+        }
+    }
 
     let db = dollet_core::db::connect(&config.db_path())
         .await
@@ -323,6 +363,22 @@ async fn serve(config: Config) -> anyhow::Result<()> {
 }
 
 async fn shutdown_signal() {
+    shutdown_requested().await;
+
+    tracing::info!("shutting down");
+
+    // Before the drain rather than after it. `with_graceful_shutdown` waits for
+    // in-flight responses, and an MPEG-TS body never ends on its own — so with
+    // one viewer attached the process would sit until the runtime's SIGKILL,
+    // and everything sequenced after the drain, `stop_scheduler` included,
+    // would never run. Ending the sessions lets each client stream finish the
+    // ring tail and close.
+    api::shutdown_streams();
+}
+
+/// A restore's restart is the same shutdown as `docker stop`, so it drains
+/// streams and jobs the same way and exits 0 for the supervisor to restart.
+async fn shutdown_requested() {
     let ctrl_c = async {
         tokio::signal::ctrl_c()
             .await
@@ -340,20 +396,17 @@ async fn shutdown_signal() {
     #[cfg(not(unix))]
     let terminate = std::future::pending::<()>();
 
+    // Biased with the restart first, so one already requested is answered
+    // without polling the others: polling them registers the signal handlers,
+    // and a test binary that registered them stays deaf to ctrl-c for life.
     tokio::select! {
+        biased;
+        _ = restart::requested() => {
+            tracing::info!("restarting to apply a restore");
+        }
         _ = ctrl_c => {}
         _ = terminate => {}
     }
-
-    tracing::info!("shutting down");
-
-    // Before the drain rather than after it. `with_graceful_shutdown` waits for
-    // in-flight responses, and an MPEG-TS body never ends on its own — so with
-    // one viewer attached the process would sit until the runtime's SIGKILL,
-    // and everything sequenced after the drain, `stop_scheduler` included,
-    // would never run. Ending the sessions lets each client stream finish the
-    // ring tail and close.
-    api::shutdown_streams();
 }
 
 /// Warn once per render node this process cannot open.
@@ -447,6 +500,17 @@ mod tests {
 
     async fn count(db: &SqlitePool, sql: &str) -> i64 {
         sqlx::query_scalar(sql).fetch_one(db).await.expect(sql)
+    }
+
+    /// A restore is applied by the next boot, so a restart that is asked for
+    /// and never begins leaves the operator on the database they meant to
+    /// replace, told otherwise.
+    #[tokio::test]
+    async fn a_restart_request_begins_the_ordinary_shutdown() {
+        restart::request();
+        tokio::time::timeout(std::time::Duration::from_secs(5), shutdown_requested())
+            .await
+            .expect("the restart request did not end the wait for a shutdown");
     }
 
     #[tokio::test]

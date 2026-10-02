@@ -82,6 +82,50 @@ describe('api client', () => {
     expect(init.headers['Content-Type']).toBeUndefined();
   });
 
+  it('sends a Blob as its own bytes rather than JSON-encoding it', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse(201, {}));
+    const api = createApiClient({ tokens, fetchImpl });
+    const file = new Blob(['PK'], { type: 'application/zip' });
+
+    await api.post('/core/backups/upload/', file);
+
+    const [, init] = fetchImpl.mock.calls[0];
+    expect(init.body).toBe(file);
+    // fetch takes the type from the Blob itself.
+    expect(init.headers['Content-Type']).toBeUndefined();
+  });
+
+  it('hands back a download as a Blob when asked to', async () => {
+    const saved = new Blob(['PK']);
+    const fetchImpl = vi.fn().mockResolvedValue({
+      status: 200,
+      ok: true,
+      headers: { get: () => 'application/zip' },
+      blob: async () => saved,
+      text: async () => {
+        throw new Error('a download must not be read as text');
+      },
+    });
+    const api = createApiClient({ tokens, fetchImpl });
+
+    await expect(api.get('/core/backups/x/download/', { blob: true })).resolves.toBe(
+      saved,
+    );
+  });
+
+  it('still reads a refused download as an error rather than a file', async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValue(jsonResponse(404, { detail: 'Not found.' }));
+    const api = createApiClient({ tokens, fetchImpl });
+
+    const error = await api
+      .get('/core/backups/x/download/', { blob: true })
+      .catch((failure) => failure);
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error.status).toBe(404);
+  });
+
   it('builds a query string and drops empty values', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(jsonResponse(200, []));
     const api = createApiClient({ tokens, fetchImpl });

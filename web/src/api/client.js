@@ -12,10 +12,12 @@ import { tokenStore } from '../auth/tokenStore.js';
 /**
  * @typedef {object} RequestOptions
  * @property {'GET'|'POST'|'PATCH'|'DELETE'} [method]
- * @property {unknown} [body] JSON-encoded unless it is a `FormData`.
+ * @property {unknown} [body] JSON-encoded unless it is a `FormData` or a `Blob`.
  * @property {Record<string, string | number | boolean | null | undefined>} [query]
  * @property {Record<string, string>} [headers]
  * @property {boolean} [auth] Set false for endpoints that must not carry a token.
+ * @property {boolean} [blob] Resolve a successful response as a `Blob` rather
+ *   than reading it as text, for a file the user is saving.
  * @property {AbortSignal} [signal]
  */
 
@@ -88,6 +90,11 @@ export function createApiClient({
     let payload;
     if (body instanceof FormData) {
       payload = body; // fetch sets the multipart boundary itself.
+    } else if (body instanceof Blob) {
+      // Sent as the bytes they are, with the file's own type: a backup is a
+      // database-sized zip, and reading it into a string to wrap it in JSON
+      // would hold it in memory twice.
+      payload = body;
     } else if (body !== undefined) {
       payload = JSON.stringify(body);
       finalHeaders['Content-Type'] = 'application/json';
@@ -170,6 +177,7 @@ export function createApiClient({
       if (response.status === 401) tokens.clear();
     }
 
+    if (options.blob && response.ok) return response.blob();
     const body = await readBody(response);
     if (!response.ok) throw toApiError(response.status, body);
     return body;
