@@ -3,21 +3,28 @@ import { createTheme, rem } from '@mantine/core';
 /**
  * Dark-only, dense, green-accented.
  *
- * The palette is deliberately darker and lower-contrast than Mantine's stock
- * dark scheme: this UI is mostly large tables, and stock `dark.7` surfaces put
- * enough light on screen that row text stops being the brightest thing in view.
+ * Surfaces, borders and secondary text all come from this one scale, so
+ * readability is fixed here rather than page by page. Mantine's dark scheme
+ * reads text from `dark-0`, dimmed text from `dark-2` and placeholders from
+ * `dark-3`; this app lays the page on `dark-9`, panels on `dark-8`, table
+ * headers and hover on `dark-7`, and borders and input fields on `dark-6`.
+ *
+ * The surfaces are darker than Mantine's stock ones: this UI is mostly large
+ * tables, and stock `dark.7` surfaces put enough light on screen that row text
+ * stops being the brightest thing in view. The text tones are held to measured
+ * contrast floors in `theme.test.js`.
  */
 const surface = [
-  '#c9ced6',
-  '#9aa2ae',
-  '#6f7683',
-  '#4e545e',
+  '#e4e8ee',
+  '#b4bcc7',
+  '#9aa3b0',
+  '#7d8592',
   '#3a3f47',
   '#2a2e35',
   '#1e2228',
-  '#171a1f',
-  '#12151a',
-  '#0a0c10',
+  '#13161b',
+  '#0e1115',
+  '#07090c',
 ];
 
 const accent = [
@@ -33,10 +40,25 @@ const accent = [
   '#0a4a29',
 ];
 
-export const theme = createTheme({
+/**
+ * High contrast lifts the text tones only: main text to near white, dimmed text
+ * up a step to where `dark-1` sits by default, and `dark-1` between the two so
+ * the scale still runs light to dark. The surfaces stay, so the layout reads
+ * the same and only the words get brighter.
+ */
+const highContrastText = ['#f4f6f9', '#ccd2da', '#b4bcc7'];
+
+/**
+ * Mantine's `scale` multiplies every size it emits through `rem()`, and the CSS
+ * modules multiply their font sizes by the same `--mantine-scale`, so one number
+ * resizes the text. The steps are arbitrary: they set the tables' 12.5 px text
+ * at 11.25 px and 14 px.
+ */
+const textScale = { small: 0.9, default: 1, large: 1.12 };
+
+const base = {
   primaryColor: 'accent',
   primaryShade: 6,
-  colors: { dark: surface, accent },
   fontFamily:
     'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
   fontFamilyMonospace: 'ui-monospace, SFMono-Regular, Menlo, monospace',
@@ -62,4 +84,11 @@ export const theme = createTheme({
     Modal: { defaultProps: { centered: true, overlayProps: { backgroundOpacity: 0.7 } } },
     Tooltip: { defaultProps: { fz: 'xs', withArrow: true, openDelay: 400 } },
   },
-});
+};
+
+/** The theme for one browser's appearance choices, from `appearance.js`. */
+export function buildTheme({ textSize, contrast }) {
+  const dark = contrast === 'high' ? [...highContrastText, ...surface.slice(3)] : surface;
+
+  return createTheme({ ...base, scale: textScale[textSize], colors: { dark, accent } });
+}

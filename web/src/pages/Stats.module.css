@@ -18,13 +18,13 @@
 }
 
 .channelName {
-  font-size: 14px;
+  font-size: calc(14px * var(--mantine-scale));
   font-weight: 600;
   color: var(--mantine-color-gray-1);
 }
 
 .output {
-  font-size: 11px;
+  font-size: calc(11px * var(--mantine-scale));
   color: var(--mantine-color-dark-2);
 }
 
@@ -32,7 +32,7 @@
    an operator most wants to see when a channel misbehaves. */
 .url {
   font-family: var(--mantine-font-family-monospace);
-  font-size: 11px;
+  font-size: calc(11px * var(--mantine-scale));
   color: var(--mantine-color-dark-2);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -52,7 +52,7 @@
   border-radius: 3px;
   background: var(--mantine-color-dark-6);
   color: var(--mantine-color-gray-3);
-  font-size: 10.5px;
+  font-size: calc(10.5px * var(--mantine-scale));
   font-weight: 600;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -74,14 +74,14 @@
 }
 
 .metricLabel {
-  font-size: 10px;
+  font-size: calc(10px * var(--mantine-scale));
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--mantine-color-dark-3);
 }
 
 .metricValue {
-  font-size: 13px;
+  font-size: calc(13px * var(--mantine-scale));
   color: var(--mantine-color-gray-2);
   font-variant-numeric: tabular-nums;
 }
@@ -89,7 +89,7 @@
 .clients {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: calc(12px * var(--mantine-scale));
   margin-top: 4px;
 }
 
@@ -97,7 +97,7 @@
   text-align: left;
   font-weight: 500;
   color: var(--mantine-color-dark-2);
-  font-size: 10.5px;
+  font-size: calc(10.5px * var(--mantine-scale));
   text-transform: uppercase;
   letter-spacing: 0.04em;
   padding: 4px 8px 4px 0;
@@ -116,7 +116,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   color: var(--mantine-color-dark-2);
-  font-size: 11px;
+  font-size: calc(11px * var(--mantine-scale));
 }
 
 .empty {
@@ -141,7 +141,7 @@
   gap: 8px;
   padding: 9px 12px;
   border-bottom: 1px solid var(--mantine-color-dark-6);
-  font-size: 13px;
+  font-size: calc(13px * var(--mantine-scale));
   font-weight: 600;
   color: var(--mantine-color-gray-2);
 }
@@ -152,20 +152,20 @@
   gap: 10px;
   padding: 5px 12px;
   border-bottom: 1px solid var(--mantine-color-dark-7);
-  font-size: 12px;
+  font-size: calc(12px * var(--mantine-scale));
 }
 
 .eventTime {
   color: var(--mantine-color-dark-3);
   font-variant-numeric: tabular-nums;
-  font-size: 11px;
+  font-size: calc(11px * var(--mantine-scale));
   flex: none;
 }
 
 .eventType {
   color: var(--mantine-color-accent-4);
   font-family: var(--mantine-font-family-monospace);
-  font-size: 11px;
+  font-size: calc(11px * var(--mantine-scale));
   flex: none;
 }
 
@@ -186,13 +186,13 @@
 }
 
 .nowTitle {
-  font-size: 13px;
+  font-size: calc(13px * var(--mantine-scale));
   font-weight: 600;
   color: var(--mantine-color-gray-2);
 }
 
 .nowSubtitle {
-  font-size: 11.5px;
+  font-size: calc(11.5px * var(--mantine-scale));
   color: var(--mantine-color-dark-1);
   margin-top: 1px;
 }
@@ -201,14 +201,14 @@
   display: flex;
   justify-content: space-between;
   margin-top: 3px;
-  font-size: 10.5px;
+  font-size: calc(10.5px * var(--mantine-scale));
   color: var(--mantine-color-dark-2);
   font-variant-numeric: tabular-nums;
 }
 
 .nowDescription {
   margin-top: 5px;
-  font-size: 11.5px;
+  font-size: calc(11.5px * var(--mantine-scale));
   line-height: 1.45;
   color: var(--mantine-color-dark-1);
 }

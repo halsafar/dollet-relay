@@ -65,4 +65,26 @@ test.describe('settings', () => {
       '192.168.1.0/33',
     );
   });
+
+  test('a larger text size is kept by this browser across a reload', async ({ page }) => {
+    const textSize = settingsSection(page, 'Appearance').getByRole('radiogroup', {
+      name: 'Text size',
+    });
+    const navLink = page
+      .getByRole('navigation', { name: 'Main' })
+      .getByRole('link', { name: 'Logos' });
+
+    await expect(navLink).toHaveCSS('font-size', '13.5px');
+
+    // The label, because the radio itself is drawn zero-sized under it.
+    await textSize.getByText('Large', { exact: true }).click();
+    await expect(textSize.getByRole('radio', { name: 'Large' })).toBeChecked();
+
+    await page.reload();
+    await expect(textSize.getByRole('radio', { name: 'Large' })).toBeChecked();
+
+    // The choice reaching the page, not only the control: a CSS-module size
+    // multiplied by the scale Mantine now carries.
+    await expect(navLink).toHaveCSS('font-size', '15.12px');
+  });
 });

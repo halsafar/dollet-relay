@@ -9,7 +9,7 @@
 
 .cardTitle {
   margin: 0 0 10px;
-  font-size: 15px;
+  font-size: calc(15px * var(--mantine-scale));
   font-weight: 600;
   color: var(--mantine-color-gray-2);
 }

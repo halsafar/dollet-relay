@@ -1,8 +1,7 @@
-import { MantineProvider } from '@mantine/core';
 import { MemoryRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
 
-import { theme } from './theme.js';
+import { AppearanceProvider } from './AppearanceProvider.jsx';
 
 /**
  * Renders with the providers the app always has. Without the theme, Mantine
@@ -12,9 +11,9 @@ import { theme } from './theme.js';
 export function renderWithProviders(ui, { route = '/' } = {}) {
   return render(ui, {
     wrapper: ({ children }) => (
-      <MantineProvider theme={theme} forceColorScheme="dark">
+      <AppearanceProvider>
         <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
-      </MantineProvider>
+      </AppearanceProvider>
     ),
   });
 }

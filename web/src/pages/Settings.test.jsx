@@ -11,6 +11,7 @@ import {
 } from '../api/resources.js';
 import { renderWithProviders } from '../test-utils.jsx';
 import { ApiError } from '../api/errors.js';
+import { useAppearance } from '../appearance.js';
 
 vi.mock('../api/resources.js', () => ({
   settings: { list: vi.fn(), update: vi.fn() },
@@ -57,6 +58,8 @@ const GROUPS = [
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // The store outlives a test, and the setup file clears only its storage.
+  useAppearance.setState(useAppearance.getInitialState());
   settingsApi.list.mockResolvedValue(GROUPS);
   userAgents.list.mockResolvedValue(USER_AGENTS);
   streamProfiles.list.mockResolvedValue(STREAM_PROFILES);
@@ -91,6 +94,7 @@ describe('Settings page', () => {
       .map((button) => button.textContent);
 
     expect(headings).toEqual([
+      'Appearance',
       'Proxy Settings',
       'EPG Settings',
       'System Settings',
@@ -109,6 +113,9 @@ describe('Settings page', () => {
     ).toBeVisible();
     expect(
       screen.getByRole('textbox', { name: 'Web app and API', hidden: true }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('radiogroup', { name: 'Text size', hidden: true }),
     ).toBeVisible();
   });
 
@@ -725,5 +732,64 @@ describe('network access', () => {
     expect(screen.getByRole('textbox', { name: 'Web app and API' })).toHaveValue(
       '10.0.0.0/33',
     );
+  });
+});
+
+describe('appearance', () => {
+  /** What the rendered MantineProvider actually put on the page. */
+  const rootVariable = (name) =>
+    getComputedStyle(document.documentElement).getPropertyValue(name);
+
+  const choice = (group, option) =>
+    within(section('Appearance').getByRole('radiogroup', { name: group })).getByRole(
+      'radio',
+      { name: option },
+    );
+
+  it('applies a text size the moment it is chosen, with nothing to save', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Settings />);
+    await screen.findByText('Proxy Settings');
+
+    expect(choice('Text size', 'Default')).toBeChecked();
+    await user.click(choice('Text size', 'Large'));
+
+    expect(choice('Text size', 'Large')).toBeChecked();
+    expect(useAppearance.getState().textSize).toBe('large');
+    expect(rootVariable('--mantine-scale')).toBe('1.12');
+    expect(
+      section('Appearance').queryByRole('button', { name: 'Save' }),
+    ).not.toBeInTheDocument();
+    expect(settingsApi.update).not.toHaveBeenCalled();
+  });
+
+  it('brightens the text tones when high contrast is chosen', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Settings />);
+    await screen.findByText('Proxy Settings');
+
+    const before = rootVariable('--mantine-color-dark-0');
+    await user.click(choice('Contrast', 'High'));
+
+    expect(useAppearance.getState().contrast).toBe('high');
+    expect(rootVariable('--mantine-color-dark-0')).not.toBe(before);
+    expect(rootVariable('--mantine-color-dark-0')).toBe('#f4f6f9');
+  });
+
+  it('says the choice belongs to this browser', async () => {
+    renderWithProviders(<Settings />);
+    await screen.findByText('Proxy Settings');
+
+    expect(section('Appearance').getByText(/Stored in this browser only/)).toBeVisible();
+  });
+
+  it('offers appearance even when the server settings will not load', async () => {
+    settingsApi.list.mockRejectedValue(new ApiError('Not found.', { status: 404 }));
+    renderWithProviders(<Settings />);
+
+    await screen.findByText('Not found.');
+    expect(
+      section('Appearance').getByRole('radiogroup', { name: 'Contrast' }),
+    ).toBeVisible();
   });
 });

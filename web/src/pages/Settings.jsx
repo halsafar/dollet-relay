@@ -20,6 +20,7 @@ import { notifyDone, notifyError } from '../notify.js';
 import { TriangleAlert } from 'lucide-react';
 
 import { Page } from '../layout/AppLayout.jsx';
+import { AppearanceSettings } from './AppearanceSettings.jsx';
 import {
   outputProfiles,
   settings as settingsApi,
@@ -41,6 +42,9 @@ import {
 
 /** The one group with its own renderer and its own save rule. */
 const NETWORK_ACCESS = 'network_access';
+
+/** Not a server group: this browser's own, applied as it is chosen rather than saved. */
+const APPEARANCE = 'appearance';
 
 /** The lists a `reference` field draws its options from. */
 const REFERENCE_LISTS = {
@@ -159,7 +163,7 @@ export function Settings() {
       <Accordion
         variant="separated"
         multiple
-        defaultValue={ordered.map((group) => group.key)}
+        defaultValue={[APPEARANCE, ...ordered.map((group) => group.key)]}
         styles={{
           item: {
             background: 'var(--mantine-color-dark-8)',
@@ -167,6 +171,16 @@ export function Settings() {
           },
         }}
       >
+        <Accordion.Item value={APPEARANCE}>
+          <Accordion.Control>
+            <Text fw={500} size="sm">
+              Appearance
+            </Text>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <AppearanceSettings />
+          </Accordion.Panel>
+        </Accordion.Item>
         {ordered.map((group) => (
           <Accordion.Item key={group.key} value={group.key}>
             <Accordion.Control>

@@ -15,7 +15,7 @@
   padding: 14px 16px;
   color: var(--mantine-color-gray-1);
   font-weight: 600;
-  font-size: 15px;
+  font-size: calc(15px * var(--mantine-scale));
   letter-spacing: -0.01em;
   text-decoration: none;
 }
@@ -48,7 +48,7 @@
   border-radius: 6px;
   border: 1px solid transparent;
   color: var(--mantine-color-gray-4);
-  font-size: 13.5px;
+  font-size: calc(13.5px * var(--mantine-scale));
   text-decoration: none;
   white-space: nowrap;
 }
@@ -72,7 +72,7 @@
 
 .count {
   margin-left: auto;
-  font-size: 11px;
+  font-size: calc(11px * var(--mantine-scale));
   color: var(--mantine-color-dark-2);
 }
 
@@ -89,7 +89,7 @@
 }
 
 .userName {
-  font-size: 13px;
+  font-size: calc(13px * var(--mantine-scale));
   color: var(--mantine-color-gray-2);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -97,14 +97,14 @@
 }
 
 .userLevel {
-  font-size: 10.5px;
+  font-size: calc(10.5px * var(--mantine-scale));
   color: var(--mantine-color-dark-2);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
 .version {
-  font-size: 11px;
+  font-size: calc(11px * var(--mantine-scale));
   color: var(--mantine-color-dark-3);
   font-variant-numeric: tabular-nums;
 }

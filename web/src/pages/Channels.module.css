@@ -27,7 +27,7 @@
   align-items: center;
   gap: 10px;
   margin: 0 0 8px;
-  font-size: 15px;
+  font-size: calc(15px * var(--mantine-scale));
   font-weight: 600;
   color: var(--mantine-color-gray-2);
   flex: none;
@@ -40,7 +40,7 @@
 }
 
 .linksLabel {
-  font-size: 12px;
+  font-size: calc(12px * var(--mantine-scale));
   color: var(--mantine-color-dark-2);
   margin-right: 2px;
 }
@@ -75,7 +75,7 @@
   border-radius: 4px;
   background: var(--mantine-color-dark-5);
   color: var(--mantine-color-gray-3);
-  font-size: 11px;
+  font-size: calc(11px * var(--mantine-scale));
   font-variant-numeric: tabular-nums;
 }
 
@@ -90,7 +90,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 12.5px;
+  font-size: calc(12.5px * var(--mantine-scale));
   color: var(--mantine-color-gray-3);
 }
 
@@ -133,14 +133,14 @@
   border-radius: 3px;
   background: var(--mantine-color-yellow-9);
   color: var(--mantine-color-yellow-2);
-  font-size: 10px;
+  font-size: calc(10px * var(--mantine-scale));
   font-weight: 600;
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
 .resetOverride {
-  font-size: 11px;
+  font-size: calc(11px * var(--mantine-scale));
   color: var(--mantine-color-accent-5);
   text-decoration: underline;
 }
