@@ -24,7 +24,38 @@ import classes from './Sidebar.module.css';
  */
 const BADGE_INTERVAL_MS = 60_000;
 
-export function Sidebar() {
+/**
+ * The mark and the name, as the link home. The sidebar leads with it, and on
+ * a narrow window the top bar shows the same one beside the burger.
+ */
+export function Brand({ onNavigate }) {
+  const guard = useLeaveGuard();
+
+  return (
+    <NavLink
+      to="/channels"
+      className={classes.brand}
+      onClick={(event) => {
+        guard('/channels')(event);
+        onNavigate?.();
+      }}
+    >
+      {/* Decorative beside the name: the mark labels itself "Dollet", and a
+          link that reads "Dollet Dollet" is not an improvement. */}
+      <span className={classes.mark}>
+        <DolletMark size={18} aria-hidden="true" />
+      </span>
+      Dollet
+    </NavLink>
+  );
+}
+
+/**
+ * `onNavigate` is called on any link, chosen or held back by the leave guard
+ * alike: the drawer this renders in on a narrow window closes either way, and
+ * the guard's confirm then has the screen to itself.
+ */
+export function Sidebar({ onNavigate }) {
   const user = useSession((state) => state.user);
   const isAdmin = useSession((state) => state.isAdmin());
   const logout = useSession((state) => state.logout);
@@ -76,18 +107,18 @@ export function Sidebar() {
 
   const items = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
 
+  const leave = (to) => (event) => {
+    guard(to)(event);
+    onNavigate?.();
+  };
+
   return (
     <nav className={classes.sidebar} aria-label="Main">
-      <NavLink to="/channels" className={classes.brand} onClick={guard('/channels')}>
-        <span className={classes.mark}>
-          <DolletMark size={18} />
-        </span>
-        Dollet
-      </NavLink>
+      <Brand onNavigate={onNavigate} />
 
       <div className={classes.nav}>
         {items.map(({ label, to, icon: Icon, count }) => (
-          <NavLink key={to} to={to} className={classes.link} onClick={guard(to)}>
+          <NavLink key={to} to={to} className={classes.link} onClick={leave(to)}>
             <Icon size={17} strokeWidth={1.9} className={classes.linkIcon} />
             {label}
             {count && counts[count] !== undefined && (

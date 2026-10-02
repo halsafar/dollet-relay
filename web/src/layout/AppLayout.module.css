@@ -51,3 +51,37 @@
   align-items: center;
   gap: 8px;
 }
+
+/* The docked sidebar. `contents` leaves the nav as the flex item, so it keeps
+   its own width; hiding this wrapper hides the dock without touching the
+   same component where the drawer renders it. */
+.dock {
+  display: contents;
+}
+
+/* Burger and brand, only on a narrow window. */
+.topBar {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px;
+  flex: none;
+  background: var(--mantine-color-dark-8);
+  border-bottom: 1px solid var(--mantine-color-dark-6);
+}
+
+/* The shell's one breakpoint. Settings.module.css lays its section list
+   across the top at the same width, so the two changes of shape coincide. */
+@media (max-width: 760px) {
+  .dock {
+    display: none;
+  }
+
+  .topBar {
+    display: flex;
+  }
+
+  .content {
+    padding: 12px 14px 16px;
+  }
+}

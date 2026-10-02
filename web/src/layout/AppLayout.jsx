@@ -1,14 +1,44 @@
 import { Outlet } from 'react-router-dom';
+import { Burger, Drawer } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 
-import { Sidebar } from './Sidebar.jsx';
+import { Brand, Sidebar } from './Sidebar.jsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx';
 import classes from './AppLayout.module.css';
 
+/**
+ * The sidebar is docked beside the content on a wide window and offered from
+ * a burger on a narrow one, where docked it would take most of the width.
+ * The same `Sidebar` renders in whichever place the width calls for; the
+ * stylesheet decides which is shown.
+ */
 export function AppLayout() {
+  const [opened, { open, close }] = useDisclosure(false);
+
   return (
     <div className={classes.shell}>
-      <Sidebar />
+      <div className={classes.dock}>
+        <Sidebar />
+      </div>
+
+      <Drawer
+        opened={opened}
+        onClose={close}
+        position="left"
+        size={232}
+        padding={0}
+        withCloseButton={false}
+        overlayProps={{ backgroundOpacity: 0.7 }}
+        styles={{ body: { height: '100%' } }}
+      >
+        <Sidebar onNavigate={close} />
+      </Drawer>
+
       <main className={classes.main}>
+        <div className={classes.topBar}>
+          <Burger opened={opened} onClick={open} size="sm" aria-label="Open navigation" />
+          <Brand />
+        </div>
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>
