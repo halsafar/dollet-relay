@@ -12,7 +12,7 @@ test.describe('settings', () => {
   test('the default stream profile is chosen by name and survives a reload', async ({
     page,
   }) => {
-    const stream = settingsSection(page, 'Stream Settings');
+    const stream = await settingsSection(page, 'Streaming');
     const profile = stream.getByLabel('Default stream profile');
 
     // The seed stores id 3. What the operator must see is its name — an id in
@@ -24,20 +24,21 @@ test.describe('settings', () => {
     await expect(profile).toHaveValue('Synth Direct');
 
     await stream.getByRole('button', { name: 'Save' }).click();
-    await expect(page.getByText('Saved Stream Settings')).toBeVisible();
+    await expect(page.getByText('Saved Streaming')).toBeVisible();
 
     // The round trip is the claim: a page that only updated its own state
     // looks identical until the next visit.
     await page.reload();
-    await expect(
-      settingsSection(page, 'Stream Settings').getByLabel('Default stream profile'),
-    ).toHaveValue('Synth Direct');
+    const reloaded = await settingsSection(page, 'Streaming');
+    await expect(reloaded.getByLabel('Default stream profile')).toHaveValue(
+      'Synth Direct',
+    );
   });
 
   test('network access offers every endpoint class, whether or not one is stored', async ({
     page,
   }) => {
-    const network = settingsSection(page, 'Network Access');
+    const network = await settingsSection(page, 'Network access');
 
     // One class is restricted in the seed and three are not. Iterating the
     // stored map would make the three that are not disappear.
@@ -52,7 +53,7 @@ test.describe('settings', () => {
   test('an entry that is not a CIDR is refused inline and the draft is kept', async ({
     page,
   }) => {
-    const network = settingsSection(page, 'Network Access');
+    const network = await settingsSection(page, 'Network access');
 
     await network.getByLabel('Streams', { exact: true }).fill('192.168.1.0/33');
     await network.getByRole('button', { name: 'Save' }).click();
@@ -67,9 +68,8 @@ test.describe('settings', () => {
   });
 
   test('a larger text size is kept by this browser across a reload', async ({ page }) => {
-    const textSize = settingsSection(page, 'Appearance').getByRole('radiogroup', {
-      name: 'Text size',
-    });
+    const appearance = await settingsSection(page, 'Appearance');
+    const textSize = appearance.getByRole('radiogroup', { name: 'Text size' });
     const navLink = page
       .getByRole('navigation', { name: 'Main' })
       .getByRole('link', { name: 'Logos' });

@@ -6,6 +6,7 @@ import { CircleUserRound, LogOut } from 'lucide-react';
 import { DolletMark } from '../components/DolletMark.jsx';
 import { NAV_ITEMS, NOTIFICATIONS_PATH } from './nav.js';
 import { useSession } from '../auth/session.js';
+import { useLeaveGuard } from '../unsavedChanges.js';
 import {
   USER_LEVEL_LABELS,
   channels,
@@ -28,6 +29,7 @@ export function Sidebar() {
   const isAdmin = useSession((state) => state.isAdmin());
   const logout = useSession((state) => state.logout);
   const navigate = useNavigate();
+  const guard = useLeaveGuard();
   const [version, setVersion] = useState(null);
   const [counts, setCounts] = useState({});
   const [unacknowledged, setUnacknowledged] = useState(0);
@@ -76,7 +78,7 @@ export function Sidebar() {
 
   return (
     <nav className={classes.sidebar} aria-label="Main">
-      <NavLink to="/channels" className={classes.brand}>
+      <NavLink to="/channels" className={classes.brand} onClick={guard('/channels')}>
         <span className={classes.mark}>
           <DolletMark size={18} />
         </span>
@@ -85,7 +87,7 @@ export function Sidebar() {
 
       <div className={classes.nav}>
         {items.map(({ label, to, icon: Icon, count }) => (
-          <NavLink key={to} to={to} className={classes.link}>
+          <NavLink key={to} to={to} className={classes.link} onClick={guard(to)}>
             <Icon size={17} strokeWidth={1.9} className={classes.linkIcon} />
             {label}
             {count && counts[count] !== undefined && (

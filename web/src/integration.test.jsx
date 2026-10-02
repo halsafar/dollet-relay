@@ -354,13 +354,12 @@ describe('settings end to end', () => {
     const user = userEvent.setup();
     await boot('/settings');
 
-    const streams = await screen.findByRole('textbox', { name: 'Streams' });
-    await user.type(streams, '192.168.1.0/24');
+    // The page lands on its first section; network access is the other one.
+    await user.click(await screen.findByRole('link', { name: 'Network access' }));
+    const network = within(await screen.findByRole('region', { name: 'Network access' }));
 
-    const networkSave = within(
-      screen.getByRole('region', { name: 'Network Access' }),
-    ).getByRole('button', { name: 'Save' });
-    await user.click(networkSave);
+    await user.type(network.getByRole('textbox', { name: 'Streams' }), '192.168.1.0/24');
+    await user.click(network.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(onPatch).toHaveBeenCalled());
 

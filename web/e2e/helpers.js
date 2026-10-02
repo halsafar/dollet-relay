@@ -57,11 +57,16 @@ export function heading(page, name) {
 }
 
 /**
- * One settings section. Mantine gives each accordion panel `role="region"`
- * labelled by its control, so a section is addressable by the name the server
- * gave the group — and "Save" means *that* section's button rather than one of
- * the six on the page.
+ * Opens one settings section and returns it. The page shows one section at a
+ * time, chosen from the list beside the form, and each is a `<section>` named
+ * by its heading — so "Save" means *that* section's button and no other's.
  */
-export function settingsSection(page, name) {
-  return page.getByRole('region', { name });
+export async function settingsSection(page, name) {
+  await page
+    .getByRole('navigation', { name: 'Settings sections' })
+    .getByRole('link', { name, exact: true })
+    .click();
+  const region = page.getByRole('region', { name });
+  await expect(region).toBeVisible();
+  return region;
 }

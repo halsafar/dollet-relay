@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Route, Routes } from 'react-router-dom';
 
-import { Settings } from './Settings.jsx';
+import { SETTINGS_ROUTE, Settings } from './Settings.jsx';
 import {
   backups,
   outputProfiles,
@@ -13,6 +14,7 @@ import {
 import { renderWithProviders } from '../test-utils.jsx';
 import { ApiError } from '../api/errors.js';
 import { useAppearance } from '../appearance.js';
+import { useUnsavedChanges } from '../unsavedChanges.js';
 
 vi.mock('../api/resources.js', () => ({
   settings: { list: vi.fn(), update: vi.fn() },
@@ -75,8 +77,9 @@ const GROUPS = [
 
 beforeEach(() => {
   vi.clearAllMocks();
-  // The store outlives a test, and the setup file clears only its storage.
+  // The stores outlive a test, and the setup file clears only their storage.
   useAppearance.setState(useAppearance.getInitialState());
+  useUnsavedChanges.setState(useUnsavedChanges.getInitialState());
   settingsApi.list.mockResolvedValue(GROUPS);
   userAgents.list.mockResolvedValue(USER_AGENTS);
   streamProfiles.list.mockResolvedValue(STREAM_PROFILES);
@@ -85,40 +88,74 @@ beforeEach(() => {
 });
 
 /**
- * One section's panel. Every section is open, so each one's Save and Revert
- * are on screen at once, and a button only means something inside its own.
+ * The page on the route it owns, so the section segment reaches it. With no
+ * section named it lands on the first, which for `GROUPS` is Proxy.
+ */
+function renderSettings(route = '/settings') {
+  return renderWithProviders(
+    <Routes>
+      <Route path={SETTINGS_ROUTE} element={<Settings />} />
+    </Routes>,
+    { route },
+  );
+}
+
+/**
+ * The section on screen: a `<section>` named by its heading, so "Save" means
+ * that section's button. One is shown at a time, so this also asserts which.
  */
 function section(name) {
   return within(screen.getByRole('region', { name }));
 }
 
-describe('Settings page', () => {
-  it('renders a section per settings group', async () => {
-    renderWithProviders(<Settings />);
+/** Opens a section from the list beside the form. */
+async function open(user, name) {
+  await user.click(screen.getByRole('link', { name }));
+  return within(await screen.findByRole('region', { name }));
+}
 
-    expect(await screen.findByText('Proxy Settings')).toBeInTheDocument();
-    expect(screen.getByText('System Settings')).toBeInTheDocument();
-    expect(screen.getByText('Network Access')).toBeInTheDocument();
+describe('Settings page', () => {
+  it('lists a section per group in its own order, with appearance last', async () => {
+    renderSettings();
+    await screen.findByRole('region', { name: 'Proxy' });
+
+    const listed = within(screen.getByRole('navigation', { name: 'Settings sections' }))
+      .getAllByRole('link')
+      .map((link) => link.textContent);
+
+    // The server put Backups first; the page does not follow it.
+    expect(listed).toEqual([
+      'Proxy',
+      'Guide matching',
+      'System',
+      'Backups',
+      'Network access',
+      'Appearance',
+    ]);
   });
 
-  it('orders the sections rather than following the server', async () => {
-    renderWithProviders(<Settings />);
-    await screen.findByText('Proxy Settings');
+  it('shows one section at a time, chosen from the list', async () => {
+    const user = userEvent.setup();
+    renderSettings();
+    await screen.findByRole('region', { name: 'Proxy' });
 
-    // Accordion controls are the only buttons carrying aria-expanded.
-    const headings = screen
-      .getAllByRole('button')
-      .filter((button) => button.hasAttribute('aria-expanded'))
-      .map((button) => button.textContent);
+    expect(
+      screen.queryByRole('switch', { name: /Auto-match on refresh/ }),
+    ).not.toBeInTheDocument();
 
-    expect(headings).toEqual([
-      'Appearance',
-      'Proxy Settings',
-      'EPG Settings',
-      'System Settings',
-      'Backups',
-      'Network Access',
-    ]);
+    const guide = await open(user, 'Guide matching');
+    expect(guide.getByRole('switch', { name: /Auto-match on refresh/ })).toBeVisible();
+    expect(screen.queryByRole('region', { name: 'Proxy' })).not.toBeInTheDocument();
+  });
+
+  it('opens the section the URL names, and the first for one it does not know', async () => {
+    const { unmount } = renderSettings('/settings/system');
+    expect(await screen.findByRole('region', { name: 'System' })).toBeVisible();
+    expect(screen.queryByRole('region', { name: 'Proxy' })).not.toBeInTheDocument();
+    unmount();
+
+    renderSettings('/settings/no-such-section');
+    expect(await screen.findByRole('region', { name: 'Proxy' })).toBeVisible();
   });
 
   it('lists the backups under the schedule that writes them', async () => {
@@ -128,10 +165,9 @@ describe('Settings page', () => {
       name: 'Backups',
       value: { interval_hours: 6, keep: 7 },
     });
-    renderWithProviders(<Settings />);
-    await screen.findByText('Proxy Settings');
+    renderSettings('/settings/backup');
 
-    const backupsSection = section('Backups');
+    const backupsSection = within(await screen.findByRole('region', { name: 'Backups' }));
     expect(await backupsSection.findByText('No backups yet.')).toBeVisible();
     expect(backupsSection.getByRole('button', { name: /Back up now/ })).toBeVisible();
 
@@ -147,26 +183,9 @@ describe('Settings page', () => {
     );
   });
 
-  it('opens every section on load, not only the first', async () => {
-    renderWithProviders(<Settings />);
-    await screen.findByText('Proxy Settings');
-
-    // Found whether or not its section is open, so what fails here is the
-    // visibility rather than the lookup.
-    expect(
-      screen.getByRole('switch', { name: /Auto-match on refresh/, hidden: true }),
-    ).toBeVisible();
-    expect(
-      screen.getByRole('textbox', { name: 'Web app and API', hidden: true }),
-    ).toBeVisible();
-    expect(
-      screen.getByRole('radiogroup', { name: 'Text size', hidden: true }),
-    ).toBeVisible();
-  });
-
   it('labels a known field from its metadata rather than its key', async () => {
-    renderWithProviders(<Settings />);
-    await screen.findByText('Proxy Settings');
+    renderSettings();
+    await screen.findByRole('region', { name: 'Proxy' });
 
     expect(screen.getByText('Ring retention')).toBeInTheDocument();
     expect(screen.queryByText('Ring seconds')).not.toBeInTheDocument();
@@ -174,14 +193,14 @@ describe('Settings page', () => {
 
   it('surfaces a load failure', async () => {
     settingsApi.list.mockRejectedValue(new ApiError('Not found.', { status: 404 }));
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     expect(await screen.findByText('Not found.')).toBeInTheDocument();
   });
 
   it('says so when the server returns nothing', async () => {
     settingsApi.list.mockResolvedValue([]);
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     expect(
       await screen.findByText('The server returned no settings.'),
@@ -195,13 +214,13 @@ describe('Settings page', () => {
       name: 'Proxy Settings',
       value: { ring_seconds: 30, buffering_timeout: 5 },
     });
-    renderWithProviders(<Settings />);
+    renderSettings();
     await screen.findByText('Ring retention');
 
     const input = screen.getByRole('textbox', { name: /Ring retention/ });
     await user.clear(input);
     await user.type(input, '30');
-    await user.click(section('Proxy Settings').getByRole('button', { name: 'Save' }));
+    await user.click(section('Proxy').getByRole('button', { name: 'Save' }));
 
     await waitFor(() =>
       expect(settingsApi.update).toHaveBeenCalledWith('proxy_settings', {
@@ -210,45 +229,50 @@ describe('Settings page', () => {
     );
   });
 
-  it('keeps Save disabled until something actually changes', async () => {
+  it('offers Save only once something has changed', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<Settings />);
+    renderSettings();
     await screen.findByText('Ring retention');
 
-    const save = section('Proxy Settings').getByRole('button', { name: 'Save' });
-    expect(save).toBeDisabled();
+    expect(
+      section('Proxy').queryByRole('button', { name: 'Save' }),
+    ).not.toBeInTheDocument();
 
     const input = screen.getByRole('textbox', { name: /Ring retention/ });
     await user.clear(input);
     await user.type(input, '30');
 
-    expect(save).toBeEnabled();
+    expect(section('Proxy').getByText('Unsaved changes')).toBeVisible();
+    expect(section('Proxy').getByRole('button', { name: 'Save' })).toBeEnabled();
   });
 
   it('reverts a draft back to the loaded values', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<Settings />);
+    renderSettings();
     await screen.findByText('Ring retention');
 
     const input = screen.getByRole('textbox', { name: /Ring retention/ });
     await user.clear(input);
     await user.type(input, '30');
-    await user.click(section('Proxy Settings').getByRole('button', { name: 'Revert' }));
+    await user.click(section('Proxy').getByRole('button', { name: 'Revert' }));
 
     expect(input).toHaveValue('15');
+    expect(
+      section('Proxy').queryByRole('button', { name: 'Save' }),
+    ).not.toBeInTheDocument();
     expect(settingsApi.update).not.toHaveBeenCalled();
   });
 
   it('leaves the draft editable when a save is rejected', async () => {
     const user = userEvent.setup();
     settingsApi.update.mockRejectedValue(new ApiError('Bad value', { status: 400 }));
-    renderWithProviders(<Settings />);
+    renderSettings();
     await screen.findByText('Ring retention');
 
     const input = screen.getByRole('textbox', { name: /Ring retention/ });
-    const save = section('Proxy Settings').getByRole('button', { name: 'Save' });
     await user.clear(input);
     await user.type(input, '30');
+    const save = section('Proxy').getByRole('button', { name: 'Save' });
     await user.click(save);
 
     await waitFor(() => expect(save).toBeEnabled());
@@ -256,13 +280,13 @@ describe('Settings page', () => {
   });
 
   it('renders a switch for a boolean and a tag list for an array', async () => {
-    renderWithProviders(<Settings />);
-    await screen.findByText('System Settings');
+    const user = userEvent.setup();
+    renderSettings();
+    await screen.findByRole('region', { name: 'Proxy' });
 
-    expect(
-      await screen.findByRole('switch', { name: /Auto-match on refresh/ }),
-    ).toBeChecked();
-    expect(await screen.findByText('US:')).toBeInTheDocument();
+    const guide = await open(user, 'Guide matching');
+    expect(guide.getByRole('switch', { name: /Auto-match on refresh/ })).toBeChecked();
+    expect(guide.getByText('US:')).toBeInTheDocument();
   });
 
   it('says a group with no entries has none, rather than showing nothing', async () => {
@@ -271,7 +295,7 @@ describe('Settings page', () => {
     settingsApi.list.mockResolvedValue([
       { key: 'system_settings', name: 'System Settings', value: {} },
     ]);
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     expect(
       await screen.findByText('Nothing configured in this section.'),
@@ -292,7 +316,7 @@ describe('Settings page', () => {
       name: 'Network Access',
       value: { UI: '10.0.0.0/8', STREAMS: '192.168.1.0/24' },
     });
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     expect(await screen.findByRole('textbox', { name: 'Web app and API' })).toHaveValue(
       '10.0.0.0/8',
@@ -315,13 +339,13 @@ describe('Settings page', () => {
   it('still sends only the changed fields for a group the server merges', async () => {
     const user = userEvent.setup();
     settingsApi.update.mockResolvedValue(GROUPS[0]);
-    renderWithProviders(<Settings />);
+    renderSettings();
     await screen.findByText('Ring retention');
 
     const input = screen.getByRole('textbox', { name: /Ring retention/ });
     await user.clear(input);
     await user.type(input, '30');
-    await user.click(section('Proxy Settings').getByRole('button', { name: 'Save' }));
+    await user.click(section('Proxy').getByRole('button', { name: 'Save' }));
 
     await waitFor(() =>
       expect(settingsApi.update).toHaveBeenCalledWith('proxy_settings', {
@@ -344,7 +368,7 @@ describe('Settings page', () => {
       name: 'Stream Settings',
       value: { default_stream_profile: null },
     });
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     await user.click(
       await screen.findByRole('textbox', { name: /Default stream profile/ }),
@@ -376,7 +400,7 @@ describe('Settings page', () => {
       name: 'System Settings',
       value: { preferred_region: null },
     });
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     await user.clear(await screen.findByRole('textbox', { name: /Preferred region/ }));
     await user.click(screen.getByRole('button', { name: 'Save' }));
@@ -408,7 +432,7 @@ describe('Settings page', () => {
       name: 'Stream Settings',
       value: { undeclared_text: '' },
     });
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     await user.clear(await screen.findByRole('textbox', { name: /Undeclared text/i }));
     await user.click(screen.getByRole('button', { name: 'Save' }));
@@ -428,7 +452,7 @@ describe('Settings page', () => {
         value: { nested: { a: 1 } },
       },
     ]);
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     expect(await screen.findByText('Not editable here.')).toBeInTheDocument();
     expect(screen.queryByDisplayValue('[object Object]')).not.toBeInTheDocument();
@@ -438,7 +462,7 @@ describe('Settings page', () => {
     settingsApi.list.mockResolvedValue([
       { key: 'proxy_settings', name: 'Proxy Settings', value: { brand_new_knob: 'x' } },
     ]);
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     expect(await screen.findByText('Brand new knob')).toBeInTheDocument();
   });
@@ -457,7 +481,7 @@ describe('foreign-key settings', () => {
         hdhr_output_profile_id: 2,
       }),
     );
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     // The names, not 1/3/2. Nobody knows which row `3` is.
     expect(
@@ -479,7 +503,7 @@ describe('foreign-key settings', () => {
   it('shows an unset reference as Not set, and offers that as an option', async () => {
     const user = userEvent.setup();
     settingsApi.list.mockResolvedValue(streamGroup({ hdhr_output_profile_id: null }));
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     const input = await screen.findByRole('textbox', { name: /HDHR output profile/ });
     expect(input).toHaveValue('');
@@ -504,7 +528,7 @@ describe('foreign-key settings', () => {
       name: 'Stream Settings',
       value: { default_user_agent: 2 },
     });
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     await user.click(await screen.findByRole('textbox', { name: /Default user agent/ }));
     await user.click(
@@ -527,7 +551,7 @@ describe('foreign-key settings', () => {
     ]);
     settingsApi.list.mockResolvedValue(streamGroup({ default_stream_profile: 3 }));
     const user = userEvent.setup();
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     await user.click(
       await screen.findByRole('textbox', { name: /Default stream profile/ }),
@@ -546,7 +570,7 @@ describe('foreign-key settings', () => {
     // Never resolves: the page has its settings but not its options yet.
     userAgents.list.mockReturnValue(new Promise(() => {}));
     settingsApi.list.mockResolvedValue(streamGroup({ default_user_agent: 1 }));
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     const input = await screen.findByRole('textbox', { name: /Default user agent/ });
     expect(input).toBeDisabled();
@@ -562,7 +586,7 @@ describe('foreign-key settings', () => {
       name: 'Stream Settings',
       value: { default_user_agent: 3 },
     });
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     expect(
       await screen.findByText(/Could not list User agents: Not found\./),
@@ -589,7 +613,7 @@ describe('foreign-key settings', () => {
       name: 'Stream Settings',
       value: { default_stream_profile: null },
     });
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     await user.clear(
       await screen.findByRole('textbox', { name: /Default stream profile/ }),
@@ -612,7 +636,7 @@ describe('the stream identity key', () => {
   it('offers exactly the tokens the server parses', async () => {
     const user = userEvent.setup();
     settingsApi.list.mockResolvedValue(hashGroup('url'));
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     await user.click(await screen.findByRole('textbox', { name: /Stream identity key/ }));
 
@@ -630,7 +654,7 @@ describe('the stream identity key', () => {
       name: 'Stream Settings',
       value: { m3u_hash_key: 'name,url' },
     });
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     await user.click(await screen.findByRole('textbox', { name: /Stream identity key/ }));
     await user.click(await screen.findByRole('option', { name: 'name', hidden: true }));
@@ -647,7 +671,7 @@ describe('the stream identity key', () => {
   it('refuses to save an empty selection rather than sending ""', async () => {
     const user = userEvent.setup();
     settingsApi.list.mockResolvedValue(hashGroup('url'));
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     // Deselecting the last token. An empty key hashes every stream in an
     // account alike, and the refresh that discovers it refuses to write.
@@ -669,7 +693,7 @@ describe('network access', () => {
 
   it('renders every endpoint class even when the stored map is empty', async () => {
     settingsApi.list.mockResolvedValue(networkGroup({}));
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     // The state a fresh or imported instance is in.
     for (const label of [
@@ -689,7 +713,7 @@ describe('network access', () => {
 
   it('shows a stored list in its own row', async () => {
     settingsApi.list.mockResolvedValue(networkGroup({ UI: '10.0.0.0/8' }));
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     expect(await screen.findByRole('textbox', { name: 'Web app and API' })).toHaveValue(
       '10.0.0.0/8',
@@ -707,7 +731,7 @@ describe('network access', () => {
       name: 'Network Access',
       value: { STREAMS: '192.168.1.0/24' },
     });
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     await user.clear(await screen.findByRole('textbox', { name: 'Web app and API' }));
 
@@ -737,7 +761,7 @@ describe('network access', () => {
       name: 'Network Access',
       value: { FUTURE: '10.0.0.0/8', UI: '10.0.0.0/8' },
     });
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     expect(await screen.findByRole('textbox', { name: 'FUTURE' })).toHaveValue(
       '10.0.0.0/8',
@@ -763,7 +787,7 @@ describe('network access', () => {
     settingsApi.update.mockRejectedValue(
       new ApiError('invalid CIDRs — UI: 10.0.0.0/33', { status: 400 }),
     );
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     await user.type(
       await screen.findByRole('textbox', { name: 'Web app and API' }),
@@ -780,6 +804,69 @@ describe('network access', () => {
   });
 });
 
+describe('leaving a section with unsaved changes', () => {
+  async function editRingRetention(user) {
+    const input = await screen.findByRole('textbox', { name: /Ring retention/ });
+    await user.clear(input);
+    await user.type(input, '30');
+    return input;
+  }
+
+  it('asks first, and keeps the draft when the answer is no', async () => {
+    const user = userEvent.setup();
+    renderSettings();
+    await editRingRetention(user);
+
+    await user.click(screen.getByRole('link', { name: 'System' }));
+
+    const dialog = await screen.findByRole('dialog');
+    expect(within(dialog).getByText('Discard unsaved changes?')).toBeVisible();
+    await user.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    expect(screen.getByRole('region', { name: 'Proxy' })).toBeVisible();
+    expect(screen.getByRole('textbox', { name: /Ring retention/ })).toHaveValue('30');
+  });
+
+  it('discards the draft and moves on when the answer is yes', async () => {
+    const user = userEvent.setup();
+    renderSettings();
+    await editRingRetention(user);
+
+    await user.click(screen.getByRole('link', { name: 'System' }));
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: 'Discard' }),
+    );
+
+    expect(await screen.findByRole('region', { name: 'System' })).toBeVisible();
+    expect(screen.queryByRole('region', { name: 'Proxy' })).not.toBeInTheDocument();
+
+    // Nothing is dirty any more, so the way back is not asked about, and the
+    // draft is gone rather than waiting there.
+    await user.click(screen.getByRole('link', { name: 'Proxy' }));
+    expect(await screen.findByRole('textbox', { name: /Ring retention/ })).toHaveValue(
+      '15',
+    );
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('warns the browser before a reload while something is unsaved', async () => {
+    const user = userEvent.setup();
+    renderSettings();
+    await editRingRetention(user);
+
+    const unload = () => {
+      const event = new Event('beforeunload', { cancelable: true });
+      window.dispatchEvent(event);
+      return event.defaultPrevented;
+    };
+    expect(unload()).toBe(true);
+
+    await user.click(section('Proxy').getByRole('button', { name: 'Revert' }));
+    expect(unload()).toBe(false);
+  });
+});
+
 describe('appearance', () => {
   /** What the rendered MantineProvider actually put on the page. */
   const rootVariable = (name) =>
@@ -793,8 +880,8 @@ describe('appearance', () => {
 
   it('applies a text size the moment it is chosen, with nothing to save', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<Settings />);
-    await screen.findByText('Proxy Settings');
+    renderSettings('/settings/appearance');
+    await screen.findByRole('region', { name: 'Appearance' });
 
     expect(choice('Text size', 'Default')).toBeChecked();
     await user.click(choice('Text size', 'Large'));
@@ -810,8 +897,8 @@ describe('appearance', () => {
 
   it('brightens the text tones when high contrast is chosen', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<Settings />);
-    await screen.findByText('Proxy Settings');
+    renderSettings('/settings/appearance');
+    await screen.findByRole('region', { name: 'Appearance' });
 
     const before = rootVariable('--mantine-color-dark-0');
     await user.click(choice('Contrast', 'High'));
@@ -822,15 +909,15 @@ describe('appearance', () => {
   });
 
   it('says the choice belongs to this browser', async () => {
-    renderWithProviders(<Settings />);
-    await screen.findByText('Proxy Settings');
+    renderSettings('/settings/appearance');
+    await screen.findByRole('region', { name: 'Appearance' });
 
     expect(section('Appearance').getByText(/Stored in this browser only/)).toBeVisible();
   });
 
   it('offers appearance even when the server settings will not load', async () => {
     settingsApi.list.mockRejectedValue(new ApiError('Not found.', { status: 404 }));
-    renderWithProviders(<Settings />);
+    renderSettings();
 
     await screen.findByText('Not found.');
     expect(

@@ -17,7 +17,7 @@ test('a backup taken by hand is listed and downloads as a zip', async ({ page })
   await page.goto('/settings');
   await expect(heading(page, 'Settings')).toBeVisible();
 
-  const backups = settingsSection(page, 'Backups');
+  const backups = await settingsSection(page, 'Backups');
   await backups.getByRole('button', { name: 'Back up now' }).click();
 
   const notice = page.getByText(/^Backed up as dollet-backup-\d{8}-\d{6}-manual\.zip$/);

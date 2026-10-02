@@ -81,7 +81,7 @@ test.describe('the first run of an empty instance', () => {
     // `network_access` is `{}` until someone restricts something — which is
     // exactly when they come looking for this control. Rendering the stored
     // map's keys would show a fresh instance nothing but the help line.
-    const network = settingsSection(page, 'Network Access');
+    const network = await settingsSection(page, 'Network access');
     for (const label of [
       'Web app and API',
       'Playlist, guide and HDHomeRun',

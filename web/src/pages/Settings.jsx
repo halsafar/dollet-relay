@@ -1,25 +1,28 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { Navigate, NavLink, useNavigate, useParams } from 'react-router-dom';
 import {
-  Accordion,
   Alert,
   Button,
   Center,
   Code,
-  Group,
   Loader,
   MultiSelect,
   NumberInput,
+  Popover,
   Select,
   Stack,
   Switch,
   TagsInput,
   Text,
   TextInput,
+  UnstyledButton,
 } from '@mantine/core';
 import { notifyDone, notifyError } from '../notify.js';
 import { TriangleAlert } from 'lucide-react';
 
 import { Page } from '../layout/AppLayout.jsx';
+import { ConfirmModal } from '../components/ConfirmModal.jsx';
+import { useLeaveGuard, useUnsavedChanges } from '../unsavedChanges.js';
 import { AppearanceSettings } from './AppearanceSettings.jsx';
 import {
   outputProfiles,
@@ -36,10 +39,21 @@ import {
   HASH_KEY_TOKENS,
   NETWORK_ENDPOINTS,
   fieldErrors,
+  groupLabel,
   humanize,
   joinHashKeys,
   parseHashKeys,
+  sectionSlug,
+  splitHelp,
 } from './settingsFields.js';
+import classes from './Settings.module.css';
+
+/**
+ * The page's route, with the section as an optional segment: `/settings`
+ * alone lands on the first section. Shared with the router and the tests so
+ * that a page mounted anywhere else cannot read its section.
+ */
+export const SETTINGS_ROUTE = '/settings/:section?';
 
 /** The one group with its own renderer and its own save rule. */
 const NETWORK_ACCESS = 'network_access';
@@ -48,7 +62,7 @@ const NETWORK_ACCESS = 'network_access';
 const BACKUPS = 'backup_settings';
 
 /** Not a server group: this browser's own, applied as it is chosen rather than saved. */
-const APPEARANCE = 'appearance';
+const APPEARANCE = { slug: 'appearance', label: 'Appearance' };
 
 /** The lists a `reference` field draws its options from. */
 const REFERENCE_LISTS = {
@@ -101,7 +115,16 @@ function toOptions(rows) {
   }));
 }
 
+/**
+ * One section at a time, chosen from a list beside the form: `/settings/proxy`
+ * is the proxy section. The list is the page's own rather than a branch of the
+ * main sidebar, which stays a flat list of screens.
+ */
 export function Settings() {
+  const { section } = useParams();
+  const headingId = useId();
+  const guard = useLeaveGuard();
+
   const load = useCallback(() => settingsApi.list(), []);
   const { data: groups, loading, error, setData: setGroups } = useResource(load, []);
   const { data: lists, loading: listsLoading } = useResource(loadReferences, {});
@@ -115,12 +138,18 @@ export function Settings() {
     .filter(([, entry]) => entry.error)
     .map(([name, entry]) => `${REFERENCE_LISTS[name].label}: ${entry.error.message}`);
 
-  const ordered = useMemo(() => {
+  const sections = useMemo(() => {
     const rank = (key) => {
       const index = GROUP_ORDER.indexOf(key);
       return index === -1 ? GROUP_ORDER.length : index;
     };
-    return [...groups].sort((a, b) => rank(a.key) - rank(b.key));
+    return [...groups]
+      .sort((a, b) => rank(a.key) - rank(b.key))
+      .map((group) => ({
+        slug: sectionSlug(group.key),
+        label: groupLabel(group),
+        group,
+      }));
   }, [groups]);
 
   const replaceGroup = useCallback(
@@ -144,16 +173,22 @@ export function Settings() {
     );
   }
 
+  const current = [...sections, APPEARANCE].find((entry) => entry.slug === section);
+  if (!current) {
+    const first = sections[0] ?? APPEARANCE;
+    return <Navigate to={`/settings/${first.slug}`} replace />;
+  }
+
   return (
-    <Page title="Settings" subtitle="Server configuration, stored in the database">
+    <Page title="Settings">
       {error && (
         <Alert color="red" variant="light" icon={<TriangleAlert size={16} />} mb="md">
           {error.message}
         </Alert>
       )}
 
-      {!error && ordered.length === 0 && (
-        <Text size="sm" c="dimmed">
+      {!error && sections.length === 0 && (
+        <Text size="sm" c="dimmed" mb="md">
           The server returned no settings.
         </Text>
       )}
@@ -164,45 +199,75 @@ export function Settings() {
         </Alert>
       )}
 
-      <Accordion
-        variant="separated"
-        multiple
-        defaultValue={[APPEARANCE, ...ordered.map((group) => group.key)]}
-        styles={{
-          item: {
-            background: 'var(--mantine-color-dark-8)',
-            border: '1px solid var(--mantine-color-dark-6)',
-          },
-        }}
-      >
-        <Accordion.Item value={APPEARANCE}>
-          <Accordion.Control>
-            <Text fw={500} size="sm">
-              Appearance
-            </Text>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <AppearanceSettings />
-          </Accordion.Panel>
-        </Accordion.Item>
-        {ordered.map((group) => (
-          <Accordion.Item key={group.key} value={group.key}>
-            <Accordion.Control>
-              <Text fw={500} size="sm">
-                {group.name}
-              </Text>
-            </Accordion.Control>
-            <Accordion.Panel>
+      <div className={classes.layout}>
+        <nav className={classes.nav} aria-label="Settings sections">
+          {sections.map((entry) => (
+            <NavLink
+              key={entry.slug}
+              to={`/settings/${entry.slug}`}
+              className={classes.navLink}
+              onClick={guard(`/settings/${entry.slug}`)}
+            >
+              {entry.label}
+            </NavLink>
+          ))}
+          <div className={classes.navGroup}>This browser</div>
+          <NavLink
+            to={`/settings/${APPEARANCE.slug}`}
+            className={classes.navLink}
+            onClick={guard(`/settings/${APPEARANCE.slug}`)}
+          >
+            {APPEARANCE.label}
+          </NavLink>
+        </nav>
+
+        <section className={classes.form} aria-labelledby={headingId}>
+          <h2 id={headingId} className={classes.sectionTitle}>
+            {current.label}
+          </h2>
+          {current.group ? (
+            <>
+              {GROUP_HELP[current.group.key] && (
+                <p className={classes.sectionHelp}>{GROUP_HELP[current.group.key]}</p>
+              )}
               <SettingsSection
-                group={group}
+                key={current.group.key}
+                group={current.group}
                 references={references}
                 onSaved={replaceGroup}
               />
-            </Accordion.Panel>
-          </Accordion.Item>
-        ))}
-      </Accordion>
+            </>
+          ) : (
+            <AppearanceSettings />
+          )}
+        </section>
+      </div>
+
+      <LeaveConfirm />
     </Page>
+  );
+}
+
+/**
+ * Asked when a link would leave a section that has unsaved changes. Rendered
+ * by the page rather than by the shell, because a section can only be dirty
+ * while this page is on screen.
+ */
+function LeaveConfirm() {
+  const pending = useUnsavedChanges((state) => state.pending);
+  const settle = useUnsavedChanges((state) => state.settle);
+  const navigate = useNavigate();
+
+  if (pending === null) return null;
+
+  return (
+    <ConfirmModal
+      title="Discard unsaved changes?"
+      message="This section has changes that have not been saved. Leaving it discards them."
+      confirmLabel="Discard"
+      onConfirm={() => navigate(pending)}
+      onClose={settle}
+    />
   );
 }
 
@@ -257,6 +322,23 @@ function SettingsSection({ group, references, onSaved }) {
 
   const dirty = Object.keys(changed).length > 0;
   const errors = useMemo(() => fieldErrors(group.key, draft), [group.key, draft]);
+
+  // Published for the links that could leave this section behind; cleared
+  // when it goes, which is also how a confirmed leave stops being dirty.
+  const setDirty = useUnsavedChanges((state) => state.setDirty);
+  useEffect(() => {
+    setDirty(dirty);
+    return () => setDirty(false);
+  }, [dirty, setDirty]);
+
+  // A reload or a closed tab gets the browser's own prompt: nothing of ours
+  // survives either, so there is nothing of ours to ask with.
+  useEffect(() => {
+    if (!dirty) return undefined;
+    const warn = (event) => event.preventDefault();
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
   const blocked = Object.keys(errors).length > 0;
 
   const set = (field, value) => setDraft((current) => ({ ...current, [field]: value }));
@@ -272,7 +354,7 @@ function SettingsSection({ group, references, onSaved }) {
       setDraft(value);
       setFailure(null);
       onSaved({ key: group.key, name: updated?.name ?? group.name, value });
-      notifyDone(`Saved ${group.name}`);
+      notifyDone(`Saved ${groupLabel(group)}`);
     } catch (rejection) {
       // Inline as well as in a notification: a 400 here names the entries that
       // were refused, and that has to stay on screen next to the fields being
@@ -290,56 +372,60 @@ function SettingsSection({ group, references, onSaved }) {
   const network = group.key === NETWORK_ACCESS;
 
   return (
-    <Stack gap="sm">
-      {GROUP_HELP[group.key] && (
-        <Text size="xs" c="dimmed">
-          {GROUP_HELP[group.key]}
-        </Text>
+    <>
+      <Stack gap="md">
+        {failure && (
+          <Alert color="red" variant="light" icon={<TriangleAlert size={16} />}>
+            {failure.message}
+          </Alert>
+        )}
+
+        {!network && fields.length === 0 && (
+          <Text size="xs" c="dimmed">
+            Nothing configured in this section.
+          </Text>
+        )}
+
+        {network ? (
+          <NetworkAccessFields draft={draft} onChange={set} />
+        ) : (
+          fields.map((field) => (
+            <SettingField
+              key={field}
+              groupKey={group.key}
+              field={field}
+              value={draft[field]}
+              error={errors[field]}
+              references={references}
+              onChange={(value) => set(field, value)}
+            />
+          ))
+        )}
+
+        {group.key === BACKUPS && <BackupList />}
+      </Stack>
+
+      {/* Only once there is something to save: a page of disabled buttons is
+          a page asking to be checked for what they are waiting on. Pinned to
+          the bottom of the pane until it is saved or reverted. */}
+      {dirty && (
+        <div className={classes.saveBar}>
+          <span className={classes.saveBarText}>Unsaved changes</span>
+          <div className={classes.saveBarButtons}>
+            <Button
+              variant="default"
+              disabled={busy}
+              onClick={() => setDraft(group.value)}
+            >
+              Revert
+            </Button>
+            <Button disabled={blocked} loading={busy} onClick={save}>
+              Save
+            </Button>
+          </div>
+        </div>
       )}
-
-      {failure && (
-        <Alert color="red" variant="light" icon={<TriangleAlert size={16} />}>
-          {failure.message}
-        </Alert>
-      )}
-
-      {!network && fields.length === 0 && (
-        <Text size="xs" c="dimmed">
-          Nothing configured in this section.
-        </Text>
-      )}
-
-      {network ? (
-        <NetworkAccessFields draft={draft} onChange={set} />
-      ) : (
-        fields.map((field) => (
-          <SettingField
-            key={field}
-            groupKey={group.key}
-            field={field}
-            value={draft[field]}
-            error={errors[field]}
-            references={references}
-            onChange={(value) => set(field, value)}
-          />
-        ))
-      )}
-
-      <Group justify="flex-end" gap="xs">
-        <Button
-          variant="default"
-          disabled={!dirty || busy}
-          onClick={() => setDraft(group.value)}
-        >
-          Revert
-        </Button>
-        <Button disabled={!dirty || blocked} loading={busy} onClick={save}>
-          Save
-        </Button>
-      </Group>
-
-      {group.key === BACKUPS && <BackupList />}
-    </Stack>
+    </>
   );
 }
 
@@ -391,6 +477,33 @@ function controlType(meta, value) {
   return 'string';
 }
 
+/** The first sentence of a field's help, and the rest of it behind one word. */
+function Description({ help }) {
+  const { summary, detail } = splitHelp(help);
+  if (!summary) return null;
+
+  return (
+    <>
+      {summary}
+      {detail && (
+        <>
+          {' '}
+          <Popover width={400} position="bottom-start" shadow="md" withArrow>
+            <Popover.Target>
+              <UnstyledButton className={classes.more}>More</UnstyledButton>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <Text size="xs" lh={1.5}>
+                {detail}
+              </Text>
+            </Popover.Dropdown>
+          </Popover>
+        </>
+      )}
+    </>
+  );
+}
+
 /**
  * Renders one setting from its declared type, falling back to the runtime type
  * of its value.
@@ -401,10 +514,11 @@ function controlType(meta, value) {
 function SettingField({ groupKey, field, value, error, references, onChange }) {
   const meta = FIELD_META[`${groupKey}.${field}`] ?? {};
   const label = meta.label ?? humanize(field);
-  const description = meta.unit
-    ? [meta.help, `In ${meta.unit}.`].filter(Boolean).join(' ')
-    : meta.help;
-  const shared = { label, description, error };
+  const shared = {
+    label,
+    description: meta.help ? <Description help={meta.help} /> : undefined,
+    error,
+  };
   const type = controlType(meta, value);
 
   if (type === 'hashKeys') {
@@ -466,6 +580,16 @@ function SettingField({ groupKey, field, value, error, references, onChange }) {
     return (
       <NumberInput
         {...shared}
+        classNames={{ wrapper: classes.short }}
+        hideControls
+        thousandSeparator=","
+        // The unit on the field, where the number is, rather than at the end
+        // of the help text.
+        rightSection={
+          meta.unit ? <span className={classes.unit}>{meta.unit}</span> : null
+        }
+        rightSectionWidth={meta.unit ? `${meta.unit.length + 2}ch` : undefined}
+        rightSectionPointerEvents="none"
         value={value ?? ''}
         placeholder={meta.nullable ? 'Not set' : undefined}
         onChange={(next) => {

@@ -1,0 +1,140 @@
+/* Two columns: the list of sections, and one section's form. The form column
+   is capped, because an input the width of the pane reads as an unfinished
+   form whatever else is done to the page. */
+.layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 36px;
+}
+
+.nav {
+  position: sticky;
+  top: 0;
+  flex: 0 0 176px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Lighter than the main sidebar's links on purpose: no icon, no accent, so
+   the two columns read as two levels rather than two copies of one control. */
+.navLink {
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: var(--mantine-color-gray-4);
+  font-size: calc(13px * var(--mantine-scale));
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.navLink:hover {
+  background: var(--mantine-color-dark-7);
+  color: var(--mantine-color-gray-1);
+}
+
+.navLink[aria-current='page'] {
+  background: var(--mantine-color-dark-6);
+  color: var(--mantine-color-gray-0);
+  font-weight: 500;
+}
+
+.navGroup {
+  margin-top: 14px;
+  padding: 0 10px 4px;
+  font-size: calc(10.5px * var(--mantine-scale));
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mantine-color-dark-3);
+}
+
+.form {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 640px;
+}
+
+.sectionTitle {
+  margin: 0 0 4px;
+  font-size: calc(16px * var(--mantine-scale));
+  font-weight: 600;
+  color: var(--mantine-color-gray-1);
+}
+
+.sectionHelp {
+  margin: 0 0 18px;
+  font-size: calc(12.5px * var(--mantine-scale));
+  line-height: 1.5;
+  color: var(--mantine-color-dark-1);
+}
+
+/* A number is a few digits; a field as wide as the column suggests otherwise. */
+.short {
+  max-width: 200px;
+}
+
+.unit {
+  padding-right: 8px;
+  font-size: calc(11px * var(--mantine-scale));
+  color: var(--mantine-color-dark-2);
+}
+
+/* The rest of a field's help, behind one word at the end of its first line. */
+.more {
+  font-size: inherit;
+  line-height: inherit;
+  color: var(--mantine-color-accent-4);
+}
+
+.more:hover {
+  text-decoration: underline;
+}
+
+/* Below this the sections become a row of pills above the form. The number is
+   arbitrary: wide enough that the two columns never fight for the form's width. */
+@media (max-width: 760px) {
+  .layout {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .nav {
+    position: static;
+    flex: none;
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .navGroup {
+    display: none;
+  }
+}
+
+/* Pinned to the bottom of the pane while the section has unsaved changes, so
+   a long section never hides its Save below the fold. Sticky rather than
+   fixed: on a short section it simply follows the last field. */
+.saveBar {
+  position: sticky;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 8px 10px 8px 14px;
+  border: 1px solid var(--mantine-color-dark-5);
+  border-radius: 7px;
+  background: var(--mantine-color-dark-7);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.saveBarText {
+  font-size: calc(12.5px * var(--mantine-scale));
+  color: var(--mantine-color-gray-3);
+}
+
+.saveBarButtons {
+  display: flex;
+  gap: 8px;
+}

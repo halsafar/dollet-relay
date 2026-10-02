@@ -234,6 +234,44 @@ export const GROUP_ORDER = [
   'network_access',
 ];
 
+/**
+ * Section headings, where the server's group name is not the one to show:
+ * "Stream Settings" under a page titled Settings says "Settings" twice, and
+ * "EPG" is "TV Guide" everywhere else in this UI. An unlisted group shows its
+ * server name with any trailing "Settings" removed.
+ */
+export const GROUP_LABELS = {
+  stream_settings: 'Streaming',
+  proxy_settings: 'Proxy',
+  epg_settings: 'Guide matching',
+  numbering_settings: 'Numbering',
+  system_settings: 'System',
+  backup_settings: 'Backups',
+  network_access: 'Network access',
+};
+
+export function groupLabel(group) {
+  return GROUP_LABELS[group.key] ?? group.name.replace(/\s+settings$/i, '');
+}
+
+/** `stream_settings` -> `stream`, `network_access` -> `network-access`. */
+export function sectionSlug(key) {
+  return key.replace(/_settings$/, '').replace(/_/g, '-');
+}
+
+/**
+ * A field's help as the form shows it: the first sentence under the field, the
+ * rest behind a word. Every entry above opens with the one sentence that says
+ * what the field is; what follows is when to change it and what changing it
+ * does, which is worth reading once rather than on every visit.
+ */
+export function splitHelp(help) {
+  if (!help) return {};
+  const match = /^(.*?[.!?]["\u201d\u2019)]?)\s+(?=\S)/.exec(help);
+  if (!match) return { summary: help };
+  return { summary: match[1], detail: help.slice(match[0].length) };
+}
+
 export const GROUP_HELP = {
   proxy_settings:
     'Read once per run of the server, the first time anything uses the streaming engine: a ' +

@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { Sidebar } from './Sidebar.jsx';
 import { renderWithProviders } from '../test-utils.jsx';
 import { useSession } from '../auth/session.js';
 import { channels, fetchVersion, notifications } from '../api/resources.js';
+import { useUnsavedChanges } from '../unsavedChanges.js';
 
 vi.mock('../api/resources.js', () => ({
   channels: { count: vi.fn() },
@@ -23,6 +25,7 @@ beforeEach(() => {
   notifications.count.mockResolvedValue(2);
   fetchVersion.mockResolvedValue('0.1.0');
   useSession.setState({ status: 'authenticated', user: ADMIN });
+  useUnsavedChanges.setState(useUnsavedChanges.getInitialState());
 });
 
 afterEach(() => {
@@ -99,5 +102,29 @@ describe('the notification badge', () => {
     // minute for a link they are never shown.
     expect(notifications.count).not.toHaveBeenCalled();
     expect(screen.queryByRole('link', { name: /Notifications/ })).not.toBeInTheDocument();
+  });
+});
+
+describe('a form with unsaved changes', () => {
+  it('holds a click on a link and hands the destination to the form to ask about', async () => {
+    useUnsavedChanges.setState({ dirty: true });
+    const user = userEvent.setup();
+    renderWithProviders(<Sidebar />);
+
+    await user.click(await screen.findByRole('link', { name: 'Sources' }));
+
+    expect(useUnsavedChanges.getState().pending).toBe('/sources');
+  });
+
+  it('lets a modified click through, because that opens a new tab', async () => {
+    useUnsavedChanges.setState({ dirty: true });
+    const user = userEvent.setup();
+    renderWithProviders(<Sidebar />);
+
+    await user.keyboard('{Control>}');
+    await user.click(await screen.findByRole('link', { name: 'Sources' }));
+    await user.keyboard('{/Control}');
+
+    expect(useUnsavedChanges.getState().pending).toBeNull();
   });
 });

@@ -4,7 +4,7 @@ import { AppLayout } from './layout/AppLayout.jsx';
 import { RequireAnonymous, RequireAuth } from './auth/RequireAuth.jsx';
 import { ErrorBoundary } from './components/ErrorBoundary.jsx';
 import { Login } from './pages/Login.jsx';
-import { Settings } from './pages/Settings.jsx';
+import { SETTINGS_ROUTE, Settings } from './pages/Settings.jsx';
 import { Users } from './pages/Users.jsx';
 import { Channels } from './pages/Channels.jsx';
 import { Groups } from './pages/Groups.jsx';
@@ -36,7 +36,7 @@ export function App() {
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/stats" element={<Stats />} />
             <Route path="/users" element={<Users />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path={SETTINGS_ROUTE} element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
