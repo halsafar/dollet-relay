@@ -1,7 +1,15 @@
+/* A block between the shell's flex column and this page's content, so that
+   none of it is a flex item that can shrink. This page scrolls; it has two
+   tables, and a table that fills the shell instead is the single-table pages'
+   shape. Shrinking looked like this on a phone, where the notes above the
+   tables take most of the height: each note lost its last lines, and each
+   table's rows were clipped inside a pane too short to show one while its
+   footer still counted them. */
+.body {
+  flex: none;
+}
+
 .section {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
   margin-bottom: 18px;
 }
 
@@ -65,4 +73,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* The list above clips each item to one line, which is only possible if the
+   note's body may be narrower than the item. Mantine's body is a flex item,
+   so by default it may not: it grew to the longest item and took the note's
+   prose past the edge of the box with it. */
+.alertBody {
+  min-width: 0;
 }

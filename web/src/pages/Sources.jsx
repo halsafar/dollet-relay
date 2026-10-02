@@ -411,141 +411,145 @@ export function Sources() {
 
   return (
     <Page title="Sources" subtitle="Where channels and guide data come from">
-      {needsDecision > 0 && (
+      <div className={classes.body}>
+        {needsDecision > 0 && (
+          <Alert
+            color="yellow"
+            variant="light"
+            mb="sm"
+            icon={<HelpCircle size={16} />}
+            classNames={{ body: classes.alertBody }}
+            title={`${needsDecision} ${needsDecision === 1 ? 'channel needs' : 'channels need'} a guide decision`}
+          >
+            The matcher found a likely guide for{' '}
+            {needsDecision === 1 ? 'this channel' : 'these channels'} but not a confident
+            one, so {needsDecision === 1 ? 'it is' : 'they are'} left unmatched for you to
+            decide rather than guessed.
+            <ul className={classes.decisions}>
+              {ambiguous.slice(0, NAMED_DECISIONS).map((match) => (
+                <li key={match.channel_id}>
+                  <Text span size="xs" fw={500}>
+                    {match.channel_name}
+                  </Text>
+                  <Text span size="xs" c="dimmed">
+                    {' → '}
+                    {match.candidate_name} ({Math.round(match.score)}% match)
+                  </Text>
+                </li>
+              ))}
+            </ul>
+            {needsDecision > NAMED_DECISIONS && (
+              <Text size="xs" c="dimmed" mb={6}>
+                and {needsDecision - NAMED_DECISIONS} more.
+              </Text>
+            )}
+            <Anchor component={Link} to="/guide" size="xs">
+              Accept or dismiss each one on the TV Guide
+            </Anchor>
+          </Alert>
+        )}
+
+        {/* Beside the alert above, because that is where an operator already
+          reads what the matcher does and what it refuses to do. */}
         <Alert
-          color="yellow"
+          color="gray"
           variant="light"
           mb="sm"
-          icon={<HelpCircle size={16} />}
-          title={`${needsDecision} ${needsDecision === 1 ? 'channel needs' : 'channels need'} a guide decision`}
+          icon={<Link2 size={16} />}
+          title="Match channels to guide data"
         >
-          The matcher found a likely guide for{' '}
-          {needsDecision === 1 ? 'this channel' : 'these channels'} but not a confident
-          one, so {needsDecision === 1 ? 'it is' : 'they are'} left unmatched for you to
-          decide rather than guessed.
-          <ul className={classes.decisions}>
-            {ambiguous.slice(0, NAMED_DECISIONS).map((match) => (
-              <li key={match.channel_id}>
-                <Text span size="xs" fw={500}>
-                  {match.channel_name}
-                </Text>
-                <Text span size="xs" c="dimmed">
-                  {' → '}
-                  {match.candidate_name} ({Math.round(match.score)}% match)
-                </Text>
-              </li>
-            ))}
-          </ul>
-          {needsDecision > NAMED_DECISIONS && (
-            <Text size="xs" c="dimmed" mb={6}>
-              and {needsDecision - NAMED_DECISIONS} more.
-            </Text>
-          )}
-          <Anchor component={Link} to="/guide" size="xs">
-            Accept or dismiss each one on the TV Guide
-          </Anchor>
+          <Text size="xs" mb={8}>
+            Scores every channel that has <strong>no guide</strong> against the guide
+            channels your sources published, and maps the confident ones. A channel that
+            already has a guide is never touched, however it got one. A candidate the
+            scorer is unsure of becomes a decision to make on the TV Guide, not an
+            assignment.
+          </Text>
+          <Button size="xs" variant="default" loading={matching} onClick={matchUnmapped}>
+            Match unmapped channels
+          </Button>
         </Alert>
-      )}
 
-      {/* Beside the alert above, because that is where an operator already
-          reads what the matcher does and what it refuses to do. */}
-      <Alert
-        color="gray"
-        variant="light"
-        mb="sm"
-        icon={<Link2 size={16} />}
-        title="Match channels to guide data"
-      >
-        <Text size="xs" mb={8}>
-          Scores every channel that has <strong>no guide</strong> against the guide
-          channels your sources published, and maps the confident ones. A channel that
-          already has a guide is never touched, however it got one. A candidate the scorer
-          is unsure of becomes a decision to make on the TV Guide, not an assignment.
-        </Text>
-        <Button size="xs" variant="default" loading={matching} onClick={matchUnmapped}>
-          Match unmapped channels
-        </Button>
-      </Alert>
+        <section className={classes.section}>
+          <div className={classes.sectionHeader}>
+            <h2 className={classes.sectionTitle}>M3U accounts</h2>
+            <Button
+              size="xs"
+              variant="default"
+              leftSection={<RefreshCw size={13} />}
+              onClick={async () => {
+                await m3uApi.refreshAll();
+                await Promise.all([reloadAccounts(), reloadJobs()]);
+              }}
+            >
+              Refresh all
+            </Button>
+            <Button
+              size="xs"
+              leftSection={<Plus size={13} />}
+              onClick={() => setEditing({ kind: 'm3u', source: {} })}
+            >
+              Add M3U
+            </Button>
+          </div>
 
-      <section className={classes.section}>
-        <div className={classes.sectionHeader}>
-          <h2 className={classes.sectionTitle}>M3U accounts</h2>
-          <Button
-            size="xs"
-            variant="default"
-            leftSection={<RefreshCw size={13} />}
-            onClick={async () => {
-              await m3uApi.refreshAll();
-              await Promise.all([reloadAccounts(), reloadJobs()]);
-            }}
-          >
-            Refresh all
-          </Button>
-          <Button
-            size="xs"
-            leftSection={<Plus size={13} />}
-            onClick={() => setEditing({ kind: 'm3u', source: {} })}
-          >
-            Add M3U
-          </Button>
-        </div>
+          <DataTable
+            label="M3U accounts"
+            data={accounts}
+            columns={accountColumns}
+            getRowId={getRowId}
+            loading={accountsLoading}
+            error={accountsError}
+            rowActions={accountActions}
+            pageSize={25}
+            emptyMessage={
+              accountsError
+                ? 'Accounts could not be loaded.'
+                : 'No providers yet. Add an M3U playlist or an Xtream Codes account to import channels.'
+            }
+          />
+        </section>
 
-        <DataTable
-          label="M3U accounts"
-          data={accounts}
-          columns={accountColumns}
-          getRowId={getRowId}
-          loading={accountsLoading}
-          error={accountsError}
-          rowActions={accountActions}
-          pageSize={25}
-          emptyMessage={
-            accountsError
-              ? 'Accounts could not be loaded.'
-              : 'No providers yet. Add an M3U playlist or an Xtream Codes account to import channels.'
-          }
-        />
-      </section>
+        <section className={classes.section}>
+          <div className={classes.sectionHeader}>
+            <h2 className={classes.sectionTitle}>Guide sources</h2>
+            <Button
+              size="xs"
+              variant="default"
+              leftSection={<RefreshCw size={13} />}
+              onClick={async () => {
+                await epgApi.refreshAll();
+                await Promise.all([reloadSources(), reloadJobs()]);
+              }}
+            >
+              Refresh all
+            </Button>
+            <Button
+              size="xs"
+              leftSection={<Plus size={13} />}
+              onClick={() => setEditing({ kind: 'epg', source: {} })}
+            >
+              Add EPG
+            </Button>
+          </div>
 
-      <section className={classes.section}>
-        <div className={classes.sectionHeader}>
-          <h2 className={classes.sectionTitle}>Guide sources</h2>
-          <Button
-            size="xs"
-            variant="default"
-            leftSection={<RefreshCw size={13} />}
-            onClick={async () => {
-              await epgApi.refreshAll();
-              await Promise.all([reloadSources(), reloadJobs()]);
-            }}
-          >
-            Refresh all
-          </Button>
-          <Button
-            size="xs"
-            leftSection={<Plus size={13} />}
-            onClick={() => setEditing({ kind: 'epg', source: {} })}
-          >
-            Add EPG
-          </Button>
-        </div>
-
-        <DataTable
-          label="Guide sources"
-          data={sources}
-          columns={sourceColumns}
-          getRowId={getRowId}
-          loading={sourcesLoading}
-          error={sourcesError}
-          rowActions={sourceActions}
-          pageSize={25}
-          emptyMessage={
-            sourcesError
-              ? 'Sources could not be loaded.'
-              : 'No guide sources yet. Without one, channels appear in Plex with no programme information.'
-          }
-        />
-      </section>
+          <DataTable
+            label="Guide sources"
+            data={sources}
+            columns={sourceColumns}
+            getRowId={getRowId}
+            loading={sourcesLoading}
+            error={sourcesError}
+            rowActions={sourceActions}
+            pageSize={25}
+            emptyMessage={
+              sourcesError
+                ? 'Sources could not be loaded.'
+                : 'No guide sources yet. Without one, channels appear in Plex with no programme information.'
+            }
+          />
+        </section>
+      </div>
 
       {confirming && (
         <ConfirmModal
