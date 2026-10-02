@@ -49,6 +49,9 @@
   color: var(--mantine-color-gray-4);
   padding: 0;
   white-space: nowrap;
+  /* A column with a filter box is taller than one without; the browser's
+     default centres the shorter labels while the filtered one stays up top. */
+  vertical-align: top;
 }
 
 .headCell {
@@ -63,6 +66,15 @@
   text-align: left;
   background: none;
   border: 0;
+}
+
+/* The same row box as .headCell, so the select-all checkbox is centred on
+   the label line rather than on the top edge of a cell the filter row made
+   taller. */
+.headSelect {
+  display: flex;
+  align-items: center;
+  min-height: 30px;
 }
 
 .sortable {

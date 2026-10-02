@@ -83,6 +83,13 @@ const base = {
     Table: { defaultProps: { verticalSpacing: 4, horizontalSpacing: 'sm', fz: 'xs' } },
     Modal: { defaultProps: { centered: true, overlayProps: { backgroundOpacity: 0.7 } } },
     Tooltip: { defaultProps: { fz: 'xs', withArrow: true, openDelay: 400 } },
+    // Help text sits under the field rather than between label and field.
+    // Labels are one line, so two inputs side by side line up at the top
+    // whatever their help text does; stock order pushes each input down by
+    // the height of its own description, so neighbours drift apart.
+    InputWrapper: {
+      defaultProps: { inputWrapperOrder: ['label', 'input', 'description', 'error'] },
+    },
   },
 };
 

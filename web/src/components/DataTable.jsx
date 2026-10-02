@@ -424,12 +424,14 @@ export function DataTable({
               {onReorder && <th className={classes.gripCell} />}
               {enableSelection && (
                 <th className={classes.selectCell}>
-                  <Checkbox
-                    aria-label="Select all rows"
-                    checked={table.getIsAllPageRowsSelected()}
-                    indeterminate={table.getIsSomePageRowsSelected()}
-                    onChange={table.getToggleAllPageRowsSelectedHandler()}
-                  />
+                  <div className={classes.headSelect}>
+                    <Checkbox
+                      aria-label="Select all rows"
+                      checked={table.getIsAllPageRowsSelected()}
+                      indeterminate={table.getIsSomePageRowsSelected()}
+                      onChange={table.getToggleAllPageRowsSelectedHandler()}
+                    />
+                  </div>
                 </th>
               )}
               {headers.map((header) => {
