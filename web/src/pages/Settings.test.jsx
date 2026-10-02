@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { Settings } from './Settings.jsx';
@@ -63,6 +63,14 @@ beforeEach(() => {
   outputProfiles.list.mockResolvedValue(OUTPUT_PROFILES);
 });
 
+/**
+ * One section's panel. Every section is open, so each one's Save and Revert
+ * are on screen at once, and a button only means something inside its own.
+ */
+function section(name) {
+  return within(screen.getByRole('region', { name }));
+}
+
 describe('Settings page', () => {
   it('renders a section per settings group', async () => {
     renderWithProviders(<Settings />);
@@ -88,6 +96,20 @@ describe('Settings page', () => {
       'System Settings',
       'Network Access',
     ]);
+  });
+
+  it('opens every section on load, not only the first', async () => {
+    renderWithProviders(<Settings />);
+    await screen.findByText('Proxy Settings');
+
+    // Found whether or not its section is open, so what fails here is the
+    // visibility rather than the lookup.
+    expect(
+      screen.getByRole('switch', { name: /Auto-match on refresh/, hidden: true }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('textbox', { name: 'Web app and API', hidden: true }),
+    ).toBeVisible();
   });
 
   it('labels a known field from its metadata rather than its key', async () => {
@@ -127,7 +149,7 @@ describe('Settings page', () => {
     const input = screen.getByRole('textbox', { name: /Ring retention/ });
     await user.clear(input);
     await user.type(input, '30');
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.click(section('Proxy Settings').getByRole('button', { name: 'Save' }));
 
     await waitFor(() =>
       expect(settingsApi.update).toHaveBeenCalledWith('proxy_settings', {
@@ -141,13 +163,14 @@ describe('Settings page', () => {
     renderWithProviders(<Settings />);
     await screen.findByText('Ring retention');
 
-    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+    const save = section('Proxy Settings').getByRole('button', { name: 'Save' });
+    expect(save).toBeDisabled();
 
     const input = screen.getByRole('textbox', { name: /Ring retention/ });
     await user.clear(input);
     await user.type(input, '30');
 
-    expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled();
+    expect(save).toBeEnabled();
   });
 
   it('reverts a draft back to the loaded values', async () => {
@@ -158,7 +181,7 @@ describe('Settings page', () => {
     const input = screen.getByRole('textbox', { name: /Ring retention/ });
     await user.clear(input);
     await user.type(input, '30');
-    await user.click(screen.getByRole('button', { name: 'Revert' }));
+    await user.click(section('Proxy Settings').getByRole('button', { name: 'Revert' }));
 
     expect(input).toHaveValue('15');
     expect(settingsApi.update).not.toHaveBeenCalled();
@@ -171,22 +194,19 @@ describe('Settings page', () => {
     await screen.findByText('Ring retention');
 
     const input = screen.getByRole('textbox', { name: /Ring retention/ });
+    const save = section('Proxy Settings').getByRole('button', { name: 'Save' });
     await user.clear(input);
     await user.type(input, '30');
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.click(save);
 
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled(),
-    );
+    await waitFor(() => expect(save).toBeEnabled());
     expect(input).toHaveValue('30');
   });
 
   it('renders a switch for a boolean and a tag list for an array', async () => {
-    const user = userEvent.setup();
     renderWithProviders(<Settings />);
     await screen.findByText('System Settings');
 
-    await user.click(screen.getByRole('button', { name: 'EPG Settings' }));
     expect(
       await screen.findByRole('switch', { name: /Auto-match on refresh/ }),
     ).toBeChecked();
@@ -249,7 +269,7 @@ describe('Settings page', () => {
     const input = screen.getByRole('textbox', { name: /Ring retention/ });
     await user.clear(input);
     await user.type(input, '30');
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.click(section('Proxy Settings').getByRole('button', { name: 'Save' }));
 
     await waitFor(() =>
       expect(settingsApi.update).toHaveBeenCalledWith('proxy_settings', {

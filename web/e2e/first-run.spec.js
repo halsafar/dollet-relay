@@ -77,7 +77,6 @@ test.describe('the first run of an empty instance', () => {
     await signInAsOwner(page);
 
     await page.goto('/settings');
-    await page.getByRole('button', { name: 'Network Access' }).click();
 
     // `network_access` is `{}` until someone restricts something — which is
     // exactly when they come looking for this control. Rendering the stored

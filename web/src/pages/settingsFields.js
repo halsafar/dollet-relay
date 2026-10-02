@@ -28,7 +28,11 @@ export const FIELD_META = {
     resource: 'userAgents',
     nullable: true,
     label: 'Default user agent',
-    help: 'The User-Agent sent to a provider when neither the account nor the stream profile names one.',
+    help:
+      'The User-Agent sent to a provider when nothing more specific names one. Playback uses ' +
+      "the stream profile's, then the account's, then this; a playlist refresh uses the " +
+      "account's, then this; a guide download always uses this. Not set, requests identify " +
+      'as dollet-relay.',
   },
   'stream_settings.default_stream_profile': {
     type: 'reference',
@@ -36,18 +40,24 @@ export const FIELD_META = {
     nullable: true,
     label: 'Default stream profile',
     help:
-      'proxy relays the bytes as they arrive, with no subprocess, and is the right answer for ' +
-      'MPEG-TS sources — an HDHomeRun, Xtream .ts URLs. ffmpeg remuxes anything, including HLS, ' +
-      'at the cost of one process per active stream. A channel or an account can override this.',
+      'The profile a stream plays through when neither it, its channel nor its account names ' +
+      'one. proxy relays the bytes as they arrive, with no subprocess, and is the right answer ' +
+      'for MPEG-TS sources — an HDHomeRun, Xtream .ts URLs. ffmpeg remuxes anything, including ' +
+      'HLS, at the cost of one process per channel being watched. redirect sends the player to ' +
+      'the provider itself, so there is no failover and no output profile. Not set behaves as ' +
+      'proxy.',
   },
   'stream_settings.m3u_hash_key': {
     type: 'hashKeys',
     label: 'Stream identity key',
     help:
-      'Which fields identify a stream across refreshes. Changing it makes every existing stream ' +
-      'stop matching: the next refresh reports the whole catalogue as new, and the old rows go ' +
-      "stale and are deleted after the account's stale period — with every channel's failover " +
-      'list pointing at rows that are about to go.',
+      'Which fields identify a stream across refreshes, for every account. m3u_id is the ' +
+      'account the stream came from; on an Xtream account, url stands for the provider’s ' +
+      'stream id, because its URLs carry credentials that rotate. Changing it makes every ' +
+      "existing stream stop matching: each account's next refresh reports its whole catalogue " +
+      'as new, a group that syncs channels automatically gets a second channel for each, and ' +
+      "the old rows go stale and are deleted after the account's stale period — with every " +
+      "channel's failover list pointing at rows that are about to go.",
   },
   'stream_settings.hdhr_output_profile_id': {
     type: 'reference',
@@ -55,51 +65,80 @@ export const FIELD_META = {
     nullable: true,
     label: 'HDHR output profile',
     help:
-      'Applied to HDHomeRun lineup URLs when the URL names no profile, so Plex gets, say, AC3 ' +
-      'audio without every other client paying for it. Leave unset for no transcoding.',
+      'Applied to the stream URLs of an HDHomeRun tuner whose URL names no output profile — ' +
+      '/hdhr/ and /hdhr/<channel profile>/ — so Plex gets, say, AC3 audio without every other ' +
+      'client paying for it. A tuner added under …/output_profile/<id>/ keeps its own, and the ' +
+      'M3U and Xtream outputs never use this. Leave unset for no transcoding.',
   },
 
   'proxy_settings.buffering_timeout': {
     label: 'Buffering timeout',
     unit: 'seconds',
-    help: 'Seconds without new bytes before the input counts as stalled and failover starts.',
+    help:
+      "How long a stream profile's command may stay below the buffering speed before the " +
+      'channel moves to its next source; a channel with one source restarts it. An output ' +
+      'profile has nowhere to move to and is only marked buffering on the Stats page. A source ' +
+      'that stops sending altogether is a separate check, with a fixed 20-second limit.',
   },
   'proxy_settings.buffering_speed': {
     label: 'Buffering speed',
     help:
-      'ffmpeg speed below this means a transcode cannot keep up with real time, which a viewer ' +
-      'sees as buffering. 1.0 is real time; held below it for the buffering timeout, the ' +
-      'source is failed over.',
+      'The pace, as a multiple of real time, below which a command counts as buffering: 1.0 ' +
+      "is real time. Read from ffmpeg's speed= and VLC's buffering messages, so proxy and " +
+      'streamlink are never measured. ffmpeg at -loglevel error, as the seeded profiles run ' +
+      'it, prints no speed; add -stats to a profile for this to apply to it.',
   },
   'proxy_settings.ring_seconds': {
     label: 'Ring retention',
     unit: 'seconds',
-    help: 'How much of each stream is held in memory. Higher values cost roughly 1 MB per second per channel at 8 Mbps.',
+    help:
+      'How much of each running stream is held in memory: how far behind live a joining ' +
+      'client can start, and how far a slow one can fall behind before it skips ahead. Costs ' +
+      'about 1 MB per second at 8 Mbps, per channel, and again for each output profile in use ' +
+      'on it. The hard cap does not follow this; raise both together, or the cap binds first ' +
+      'on high-bitrate sources.',
   },
   'proxy_settings.ring_max_bytes': {
     label: 'Ring hard cap',
     unit: 'bytes',
-    help: 'Upper bound on a single ring regardless of bitrate.',
+    help:
+      'Upper bound on a single ring regardless of bitrate. The default, 37,500,000, is 15 ' +
+      "seconds of a 20 Mbps source, so an HDHomeRun's ~19.4 Mbps ATSC mux keeps the full " +
+      'retention. Wherever retention times bitrate exceeds it, this binds first and the ring ' +
+      'holds less time than the retention says.',
   },
   'proxy_settings.channel_shutdown_delay': {
     label: 'Channel shutdown delay',
     unit: 'seconds',
-    help: 'Grace period after the last client leaves, so channel surfing does not restart the stream.',
+    help:
+      'How long a channel keeps its provider connection after its last viewer leaves, so ' +
+      'switching back within it rejoins the running stream rather than reconnecting. Zero by ' +
+      "default: a connection held open for nobody still counts against the account's stream " +
+      'limit.',
   },
   'proxy_settings.channel_init_grace_period': {
-    label: 'Channel init grace period',
+    label: 'Source connect timeout',
     unit: 'seconds',
-    help: 'How long a source may take to connect and deliver its first bytes before the next one is tried.',
+    help:
+      'How long a source may take to connect and deliver its first bytes before the attempt ' +
+      'counts as failed. Each source gets three attempts before the next one is tried, so a ' +
+      'source that hangs costs a viewer several times this.',
   },
   'proxy_settings.channel_client_wait_period': {
     label: 'Client wait period',
     unit: 'seconds',
-    help: 'How long a freshly opened session waits for its first client before it counts as idle and is shut down.',
+    help:
+      'How long a freshly opened session waits for its first client before it counts as idle ' +
+      'and is shut down. The viewer who opened it normally attaches at once; this covers the ' +
+      'moment in between, so keep it above zero.',
   },
   'proxy_settings.new_client_behind_seconds': {
     label: 'New client starts behind',
     unit: 'seconds',
-    help: 'How far behind live a joining client begins, so it has something buffered before the first read.',
+    help:
+      'How far behind live a joining client begins, so its player has data to decode at once ' +
+      'instead of waiting for the next chunk. Capped by what the ring holds; a viewer who ' +
+      'starts a channel nobody was watching begins at live.',
   },
 
   'system_settings.preferred_region': {
@@ -107,44 +146,62 @@ export const FIELD_META = {
     type: 'string',
     nullable: true,
     help:
-      "Biases guide matching towards one country's channels. Leave unset unless the guide " +
-      'covers several countries: a wrong region is a channel showing someone else’s listings.',
+      'A two-letter country code in lower case (us, not US), compared with the suffix guide ' +
+      'ids carry after a dot: us favours vrix.us over vrix.uk, and counts against any guide ' +
+      'channel whose id names another country. Leave unset unless your guides cover several ' +
+      'countries: a wrong region is a channel showing someone else’s listings.',
   },
   'system_settings.max_system_events': {
     label: 'System events kept',
-    help: 'Older events are trimmed past this count.',
+    help:
+      'How many system events are kept. The oldest beyond this are deleted each time a new ' +
+      'one is written; the Stats page lists the newest 50.',
   },
 
   'epg_settings.epg_auto_match_on_refresh': {
     label: 'Auto-match on refresh',
     help:
-      'Lets a scheduled guide refresh assign guide data to channels that have none. Off by ' +
-      'default: on, a timer rewrites channel-to-guide mappings across the catalogue unattended, ' +
-      'and a wrong guide on a channel is harder to notice than no guide at all. The Guide page ' +
-      'runs the same match on demand.',
+      'Lets a refresh assign guide data to channels that have none: a guide refresh tries ' +
+      'every unmapped channel against that guide, and a playlist refresh tries the channels ' +
+      'it just created against every guide. Off by default: on, it runs unattended on every ' +
+      'scheduled refresh, and a wrong guide on a channel is harder to notice than no guide at ' +
+      'all. Match unmapped channels on the Sources page runs the same match on demand.',
   },
   'epg_settings.epg_match_ignore_prefixes': {
     label: 'Ignored name prefixes',
-    help: 'Stripped before fuzzy matching, so "US: VRIX" reaches "VRIX".',
+    help:
+      'Removed from the start of a channel or guide name before matching, so "US: VRIX" is ' +
+      'compared as "VRIX". Case-sensitive, and only the first entry that matches is removed.',
   },
   'epg_settings.epg_match_ignore_suffixes': {
     label: 'Ignored name suffixes',
-    help: 'Stripped before fuzzy matching, so "VRIX HD" reaches "VRIX".',
+    help:
+      'Removed from the end of a name the same way, so with FHD listed, "VRIX FHD" is ' +
+      'compared as "VRIX". HD, UHD, TV and resolutions like 1080p are ignored already and need ' +
+      'no entry.',
   },
   'epg_settings.epg_match_ignore_custom': {
     label: 'Other ignored fragments',
-    help: 'Stripped before fuzzy matching wherever they appear in a name.',
+    help:
+      'Removed wherever they appear in a name, every occurrence, before matching. Plain text ' +
+      'rather than whole words, and case-sensitive: an entry of UK also changes UKTV.',
   },
 
   'numbering_settings.group_block_size': {
     type: 'number',
     label: 'Group block size',
-    help: 'How wide a number range a group gets when one is assigned for it on the Groups page.',
+    help:
+      'How wide a number range Assign ranges on the Groups page gives each group that has ' +
+      'none. Blocks start above every number already in use, so 100 hands out ranges like ' +
+      '300–399 and 400–499. A range already assigned keeps its width.',
   },
   'numbering_settings.channel_step': {
     type: 'number',
     label: 'Channel step',
-    help: 'Spacing between the numbers a range hands out. 1 appends; 10 leaves nine free slots between neighbours.',
+    help:
+      "Spacing between the numbers a group's range hands out, and the grid a renumber lays a " +
+      'group out on. 1 appends; 10 leaves nine free numbers between neighbours for a channel ' +
+      'that arrives later. Changing it moves no existing channel.',
   },
 };
 
@@ -159,8 +216,18 @@ export const GROUP_ORDER = [
 ];
 
 export const GROUP_HELP = {
+  proxy_settings:
+    'Read once per run of the server, the first time anything uses the streaming engine: a ' +
+    'change here takes effect after a restart.',
+  epg_settings:
+    'These shape automatic guide matching: Match unmapped channels on the Sources page, and ' +
+    'matching on refresh when it is on. Only a channel with no guide is matched; one mapped by ' +
+    'hand is never changed.',
   network_access:
-    'Comma-separated CIDRs per endpoint class. An endpoint with no entry is open to everyone.',
+    'Comma-separated CIDRs or single addresses per endpoint class, checked on every request. ' +
+    'An endpoint with no entry is open to everyone; one with entries refuses every other ' +
+    'address. The address checked is the connection’s own unless DOLLET_TRUSTED_PROXIES names ' +
+    'it as a proxy, so behind a reverse proxy, set that first.',
 };
 
 /**
@@ -203,15 +270,20 @@ export const NETWORK_ENDPOINTS = [
   {
     key: 'UI',
     label: 'Web app and API',
-    help: 'The web app and /api/.',
+    help:
+      'Signing in, every /api/ call made with a login or an API key, and the live /ws feed. ' +
+      'The page itself still loads from anywhere.',
     warning:
-      'Restricting this to a network you are not on locks you out of this page; the way back ' +
-      'in is DOLLET_TRUSTED_PROXIES or a direct connection from an allowed address.',
+      'Restricting this to a network you are not on locks you out of this page. The way back ' +
+      'in is a browser on an allowed network, or setting network_access back to {} in ' +
+      'dollet.sqlite.',
   },
   {
     key: 'M3U_EPG',
     label: 'Playlist, guide and HDHomeRun',
-    help: '/output/m3u, /output/epg and the HDHomeRun discovery and lineup, which carry no credentials.',
+    help:
+      '/output/m3u, /output/epg and everything under /hdhr/, which carry no credentials. Plex ' +
+      'has to be on an allowed address, or its tuner stops answering.',
   },
   {
     key: 'STREAMS',

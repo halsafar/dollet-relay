@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { renderWithProviders } from './test-utils.jsx';
@@ -354,13 +354,12 @@ describe('settings end to end', () => {
     const user = userEvent.setup();
     await boot('/settings');
 
-    // Only the first section is expanded on load.
-    await user.click(await screen.findByRole('button', { name: 'Network Access' }));
-
     const streams = await screen.findByRole('textbox', { name: 'Streams' });
     await user.type(streams, '192.168.1.0/24');
 
-    const [, networkSave] = screen.getAllByRole('button', { name: 'Save' });
+    const networkSave = within(
+      screen.getByRole('region', { name: 'Network Access' }),
+    ).getByRole('button', { name: 'Save' });
     await user.click(networkSave);
 
     await waitFor(() => expect(onPatch).toHaveBeenCalled());

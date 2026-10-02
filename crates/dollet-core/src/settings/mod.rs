@@ -282,10 +282,12 @@ impl Group for StreamSettings {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct ProxySettings {
-    /// Seconds without new bytes before the input counts as stalled and
-    /// failover starts. Fifteen: a provider that pauses for a few
-    /// seconds is normal, and failing over to the next stream costs the viewer
-    /// a reconnect.
+    /// Seconds a stream profile's command may report a pace below
+    /// `buffering_speed` before the session moves to the next source. Not a
+    /// no-data timeout: a source that stops sending is the engine's fixed
+    /// `stream_timeout`. Fifteen: a pace that dips for a few seconds is
+    /// normal, and failing over to the next stream costs the viewer a
+    /// reconnect.
     pub buffering_timeout: u32,
     pub buffering_speed: f64,
     /// Ring retention. 90 s would be ~90 MB per channel at 8 Mbps — one viewer
@@ -482,8 +484,9 @@ pub struct EpgSettings {
     /// what it decided — and a wrong guide on a channel is harder to notice
     /// than no guide at all. `POST /api/epg/match/` runs it on demand.
     pub epg_auto_match_on_refresh: bool,
-    /// Stripped from channel names before fuzzy matching, so "US: VRIX" and
-    /// "VRIX HD" both reach "VRIX".
+    /// Stripped from channel and guide names before fuzzy matching, so
+    /// "US: VRIX" reaches "VRIX". "HD" and its kind need no entry: the matcher
+    /// drops them on its own.
     pub epg_match_ignore_prefixes: Vec<String>,
     pub epg_match_ignore_suffixes: Vec<String>,
     pub epg_match_ignore_custom: Vec<String>,

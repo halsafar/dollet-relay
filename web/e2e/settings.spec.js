@@ -37,7 +37,6 @@ test.describe('settings', () => {
   test('network access offers every endpoint class, whether or not one is stored', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Network Access' }).click();
     const network = settingsSection(page, 'Network Access');
 
     // One class is restricted in the seed and three are not. Iterating the
@@ -53,7 +52,6 @@ test.describe('settings', () => {
   test('an entry that is not a CIDR is refused inline and the draft is kept', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Network Access' }).click();
     const network = settingsSection(page, 'Network Access');
 
     await network.getByLabel('Streams', { exact: true }).fill('192.168.1.0/33');

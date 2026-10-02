@@ -159,7 +159,7 @@ export function Settings() {
       <Accordion
         variant="separated"
         multiple
-        defaultValue={ordered.slice(0, 1).map((group) => group.key)}
+        defaultValue={ordered.map((group) => group.key)}
         styles={{
           item: {
             background: 'var(--mantine-color-dark-8)',
